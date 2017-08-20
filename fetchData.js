@@ -366,21 +366,21 @@ function guildRank(data, boss, personalAchiev, guildAchiev, rankText){
 	}
 }
 					
-function guildPushAlt(){
+// function guildPushAlt(){
 
-	var proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates crossorigin.me make global l8r on
-	var url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
-	$.ajax({
-	  url: url,
-	  async: true,
-	  success: function(data){
-	  	var lines = data.split("\n");
-		var lineLength = lines.length;
-	  	if (lines[i].indexOf("guilds") != -1 )
-	  }
-	});
+// 	var proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates crossorigin.me make global l8r on
+// 	var url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
+// 	$.ajax({
+// 	  url: url,
+// 	  async: true,
+// 	  success: function(data){
+// 	  	var lines = data.split("\n");
+// 		var lineLength = lines.length;
+// 	  	if (lines[i].indexOf("guilds") != -1 )
+// 	  }
+// 	});
 
-}
+// }
 
 function mainPane(){
 
