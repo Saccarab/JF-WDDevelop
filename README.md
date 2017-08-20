@@ -1,2 +1,3 @@
-# JF-WDDevelop
-Offline Development instance for jf-wcraftdata
+# JF-WarcraftData
+
+Jotform Warcraft Guild application form Widget
