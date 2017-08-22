@@ -342,7 +342,7 @@ function guildRank(data, boss, personalAchiev, guildAchiev, rankText){
 								lineCount = lines.length;
 							    for (i=0 ; i < lineCount ; i++){
 									if (lines[i].trim() === playerGuilds[p].guildLocale + playerGuilds[p].guildRealm + playerGuilds[p].guildName){ //temp fix??
-										rank = i+1
+										rank = i + 1
 										img.src = "images/" + boss + ".jpg";
 										img.alt = boss+"_achiev";
 										div.appendChild(img) //   
@@ -402,7 +402,7 @@ function mainPane(){
 	  	clicked = true;
 	  	var loc;
 		var name;
-		var realm;
+		var grabRealm;
 		var wClass;
 		var grab;
 		var ilvl;
@@ -428,7 +428,7 @@ function mainPane(){
 
 				 	else if (j == 3) //Grab Realm
 
-				 		realm = grab[j].replace(/%20/g, "-");
+				 		grabRealm = grab[j].replace(/%20/g, "-");
 
 				 	else if (j == 4){ // Grab Class & Char Name
 
@@ -442,7 +442,7 @@ function mainPane(){
 				 		wClass = temp[2].replace("\"", "");
 				 		wClass = wClass.substring(wClass.indexOf("-") + 1, wClass.length);
 				 		wClass = wClass.replace("-"," ");
-				 		getItemLevel(locale, realm, name, addAltx);
+				 		getItemLevel(locale, grabRealm, name, addAltx);
 				 	} 	
 				}
 			}
