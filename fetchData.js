@@ -230,7 +230,7 @@ function getItemLevel(locale, realm, name , func){ //, div
 		request = "https://us.api.battle.net/wow/character/" + realm + "/" + name + "?fields=items&locale=en_US&apikey=" + battleNetApiKey;
 
 	$.ajax({
-		async: false,
+		async: true,
 		type: 'GET',
 		url: request,
 		success: function(data) {
@@ -489,6 +489,32 @@ function mainPane(){
 			}
 			else{}//cnd
 		}
+
+		if (locale == "EU")
+			request = "https://eu.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
+		else if (locale == "US")
+			request = "https://us.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
+	
+		$.ajax({
+			async: true,
+			type: 'GET',
+			url: request,
+			success: function(data) { //dont send the data 6 times !! fix me
+				var gText = "   Nighthold Nightmare Mythic world rank ";
+				guildRank(data, "guldan", guldanPersonal, guldanGuild, gText)
+				gText = "Trial of Valor Mythic world rank "
+				guildRank(data, "helya", helyaPersonal, helyaGuild, gText)
+				gText = "   Emerald Nightmare Mythic world rank ";
+				guildRank(data, "xavius", xaviusPersonal, xaviusGuild, gText)
+				gText = "   Hellfire Citadel Mythic world rank ";
+				guildRank(data, "archimonde", archimondePersonal, archimondeGuild, gText)
+				gText = "   Blackrock Foundry Mythic world rank ";
+				guildRank(data, "blackhand", blackhandPersonal, blackhandGuild, gText)
+				gText = "   Highmaul Mythic world rank ";
+				guildRank(data, "imperator", imperatorPersonal, imperatorGuild, gText)
+			}
+
+		});
 	   },
 	  error: function (){ // Reset on fail
 	  	clicked = false;
@@ -496,12 +522,6 @@ function mainPane(){
 	  	alert("Invalid Character");
 	  }
 	});
-
-	if (locale == "EU")
-		request = "https://eu.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
-	else if (locale == "US")
-		request = "https://us.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
-
 	// ---------------------------------------------------------------------First Kil Block ----------------------------------------------------
 
 	// ---------------------------------------------------------------------First Kil Block ----------------------------------------------------
@@ -511,27 +531,6 @@ function mainPane(){
 	// ---------------------------------------------------------------------First Kil Block ----------------------------------------------------
 
 	// ---------------------------------------------------------------------First Kil Block ----------------------------------------------------
-
-	$.ajax({
-		async: true,
-		type: 'GET',
-		url: request,
-		success: function(data) { //dont send the data 6 times !! fix me
-			var gText = "   Nighthold Nightmare Mythic world rank ";
-			guildRank(data, "guldan", guldanPersonal, guldanGuild, gText)
-			gText = "Trial of Valor Mythic world rank "
-			guildRank(data, "helya", helyaPersonal, helyaGuild, gText)
-			gText = "   Emerald Nightmare Mythic world rank ";
-			guildRank(data, "xavius", xaviusPersonal, xaviusGuild, gText)
-			gText = "   Hellfire Citadel Mythic world rank ";
-			guildRank(data, "archimonde", archimondePersonal, archimondeGuild, gText)
-			gText = "   Blackrock Foundry Mythic world rank ";
-			guildRank(data, "blackhand", blackhandPersonal, blackhandGuild, gText)
-			gText = "   Highmaul Mythic world rank ";
-			guildRank(data, "imperator", imperatorPersonal, imperatorGuild, gText)
-		}
-
-	});
 
 	var base = "https://wowtrack.org/characters/"; //WowTrack character url body
 
