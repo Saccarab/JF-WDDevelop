@@ -159,7 +159,7 @@ function getClassName(id){
 	}		
 }
 
-function formatDate(string){
+function formatDate(string){ //timestamp
 	var date = string.substring(string.lastIndexOf('s"')+3, string.lastIndexOf('</')).replace(",","");
 	splitted = date.split(" ");
 	formattedJoin = getMonth(splitted[0]) + "/" + splitted[1] + "/" + splitted[2]
@@ -318,7 +318,7 @@ function guildRank(data, boss, personalAchiev, guildAchiev, rankText){
 					request = "https://us.api.battle.net/wow/guild/" +  playerGuilds[p].guildRealm + "/" +  playerGuilds[p].guildName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
 
 				$.ajax({
-					async: false,
+					async: true,
 					type: 'GET',
 					url: request,
 					success: function(aData) {
@@ -397,7 +397,7 @@ function mainPane(){
 	// var killStamps;
 	$.ajax({
 	  url: url,
-	  async: false,
+	  async: true,
 	  success: function(data){
 
 	  	clicked = true;
@@ -443,13 +443,6 @@ function mainPane(){
 				 		wClass = temp[2].replace("\"", "");
 				 		wClass = wClass.substring(wClass.indexOf("-") + 1, wClass.length);
 				 		wClass = wClass.replace("-"," ");
-				 		var request;
-				 		if (merge == 1){ //?? wtf is this request for 
-				 			if (locale == "EU")
-				 				request = "https://eu.api.battle.net/wow/character/" + realm + "/" + name + "?fields=items&locale=en_GB&apikey=" + battleNetApiKey;
-				 			else if (locale == "US")
-				 				request = "https://us.api.battle.net/wow/character/" + realm + "/" + name + "?fields=items&locale=en_US&apikey=" + battleNetApiKey;
-				 		}
 				 		getItemLevel(locale, realm, name, addAltx);
 				 	} 	
 				}
@@ -460,7 +453,7 @@ function mainPane(){
 				var n = d.getTime();
 				var guildGrab = lines[i].substring(lines[i].lastIndexOf("guilds")+7, lines[i].lastIndexOf('" '));
 				guildGrab = guildGrab.split("/");
-				var dateLeave = formatDate(lines[i+3]);
+				var dateLeave = formatDate(lines[i+3]); //convert to stamp
 				if (isNaN(dateLeave)){
 					dateLeave = n
 					}
