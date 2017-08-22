@@ -230,7 +230,7 @@ function getItemLevel(locale, realm, name , func){ //, div
 		request = "https://us.api.battle.net/wow/character/" + realm + "/" + name + "?fields=items&locale=en_US&apikey=" + battleNetApiKey;
 
 	$.ajax({
-		async: true,
+		async: false,
 		type: 'GET',
 		url: request,
 		success: function(data) {
@@ -485,7 +485,7 @@ function mainPane(){
 					playerGuilds.push(guild); 
 				//Apr 29, 2016
 				// guildLeft = lines [i+3].substring(lines[i+3].lastIndexOf('s"')+3, lines[i+3].lastIndexOf('</'))
-				console.log(guild)
+				
 			}
 			else{}//cnd
 		}
