@@ -322,11 +322,11 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 					type: 'GET',
 					url: request,
 					data: {
-						guildIndex: 4,
+						guildIndex: p,
 					},
 					success: function(aData) {
 						
-						var gIndex = aData.guildIndex;
+						var gIndex = this.guildIndex;
 						var index = aData.achievements.achievementsCompleted.length;
 						while (index--){
 							if (aData.achievements.achievementsCompleted[index] == guildAchiev)
