@@ -298,18 +298,18 @@ function fixName(name){
 	return upperCaseFirstL(name.toLowerCase()).trim();
 }
 
-function guildRank(data, boss, personalAchiev, guildAchiev, rankText){
+function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 	var div = document.createElement("div");
 	var img = document.createElement("img");	
 	var text = document.createElement('td1');
 
-	var index = data.achievements.achievementsCompleted.length;
+	var index = fdata.achievements.achievementsCompleted.length;
 	while (index-- && index >= 0){
-		if (data.achievements.achievementsCompleted[index] == personalAchiev)
+		if (fdata.achievements.achievementsCompleted[index] == personalAchiev)
 			break;
 	}
 	if (index != -1){
-		var stamp = data.achievements.achievementsCompletedTimestamp[index];
+		var stamp = fdata.achievements.achievementsCompletedTimestamp[index];
 		for (p = 0; p < playerGuilds.length ; p++){ 
 			if (stamp < playerGuilds[p].dateLeave && stamp > playerGuilds[p].dateJoin){ //matching guild
 				if ( playerGuilds[p].guildLocale == "eu")
