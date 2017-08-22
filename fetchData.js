@@ -325,8 +325,8 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 						guildIndex: 4,
 					},
 					success: function(aData) {
-						console.log(data)
-						var gIndex = data.guildIndex;
+						
+						var gIndex = aData.guildIndex;
 						var index = aData.achievements.achievementsCompleted.length;
 						while (index--){
 							if (aData.achievements.achievementsCompleted[index] == guildAchiev)
