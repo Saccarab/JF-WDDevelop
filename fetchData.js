@@ -320,10 +320,9 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 				$.ajax({
 					async: true,
 					type: 'GET',
-					url: request,
-					data: {
-						guildIndex: p,
-					},
+					url: request,					
+					guildIndex: p,
+
 					success: function(aData) {
 						
 						var gIndex = this.guildIndex;
