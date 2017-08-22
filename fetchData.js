@@ -332,7 +332,7 @@ function guildRank(data, boss, personalAchiev, guildAchiev, rankText){
 							var rank;	
 							if (Math.abs(stamp - guildStamp) <= 150000){ //xav  swap this with wowprog First Kill
 								$.ajax({
-									async: false,
+									async: true,
 									type: 'GET',
 									url: "rankings/" + boss + ".txt",
 									success: function(sData){
