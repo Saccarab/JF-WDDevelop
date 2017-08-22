@@ -325,7 +325,7 @@ function guildRank(data, boss, personalAchiev, guildAchiev, rankText){
 						guildIndex: 4,
 					},
 					success: function(aData) {
-						var gIndex = $_GET['guildIndex'];
+						var gIndex = data.guildIndex;
 						var index = aData.achievements.achievementsCompleted.length;
 						while (index--){
 							if (aData.achievements.achievementsCompleted[index] == guildAchiev)
