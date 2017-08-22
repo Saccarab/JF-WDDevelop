@@ -316,53 +316,52 @@ function guildRank(data, boss, personalAchiev, guildAchiev, rankText){
 					request = "https://eu.api.battle.net/wow/guild/" +  playerGuilds[p].guildRealm + "/" +  playerGuilds[p].guildName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
 				else if ( playerGuilds[p].guildLocale == "us")
 					request = "https://us.api.battle.net/wow/guild/" +  playerGuilds[p].guildRealm + "/" +  playerGuilds[p].guildName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
-
-				$.ajax({
-					async: true,
-					type: 'GET',
-					url: request,
-					success: function(aData) {
-						var index = aData.achievements.achievementsCompleted.length;
-						while (index--){
-							if (aData.achievements.achievementsCompleted[index] == guildAchiev)
-								break;
-						}
-						if (index != -1){
-							var guildStamp = aData.achievements.achievementsCompletedTimestamp[index];
-							var rank;	
-							if (Math.abs(stamp - guildStamp) <= 150000){ //xav  swap this with wowprog First Kill
-								$.ajax({
-									async: true,
-									type: 'GET',
-									url: "rankings/" + boss + ".txt",
-									success: function(sData){
-										var lines = sData.split("\n");
-										lineCount = lines.length;
-									    for (i=0 ; i < lineCount ; i++){
-											if (lines[i].trim() === playerGuilds[p].guildLocale + playerGuilds[p].guildRealm + playerGuilds[p].guildName){ //temp fix??
-												rank = i+1
-												img.src = "images/" + boss + ".jpg";
-												img.alt = boss+"_achiev";
-												div.appendChild(img) //   
-												text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(playerGuilds[p].guildName) + "-" + blizzspaceToSpace(playerGuilds[p].guildRealm);
-												div.appendChild(text)
-												var kills = document.getElementById("kills");	
-												kills.appendChild(div)
-												break;
-											}
-										}
-									},
-									error: function(){ 
-									  	console.log("ff")
-			  						} 
-								});						
-							} // here
-						}
-					}
-				});
-
+				break;
 			}
 		}
+		$.ajax({
+			async: true,
+			type: 'GET',
+			url: request,
+			success: function(aData) {
+				var index = aData.achievements.achievementsCompleted.length;
+				while (index--){
+					if (aData.achievements.achievementsCompleted[index] == guildAchiev)
+						break;
+				}
+				if (index != -1){
+					var guildStamp = aData.achievements.achievementsCompletedTimestamp[index];
+					var rank;	
+					if (Math.abs(stamp - guildStamp) <= 150000){ // my first Kill is within 5 minutes of guilds kill 
+						$.ajax({
+							async: true,
+							type: 'GET',
+							url: "rankings/" + boss + ".txt",
+							success: function(sData){
+								var lines = sData.split("\n");
+								lineCount = lines.length;
+							    for (i=0 ; i < lineCount ; i++){
+									if (lines[i].trim() === playerGuilds[p].guildLocale + playerGuilds[p].guildRealm + playerGuilds[p].guildName){ //temp fix??
+										rank = i+1
+										img.src = "images/" + boss + ".jpg";
+										img.alt = boss+"_achiev";
+										div.appendChild(img) //   
+										text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(playerGuilds[p].guildName) + "-" + blizzspaceToSpace(playerGuilds[p].guildRealm);
+										div.appendChild(text)
+										var kills = document.getElementById("kills");	
+										kills.appendChild(div)
+										break;
+									}
+								}
+							},
+							error: function(){ 
+							  	console.log("ff")
+	  						} 
+						});						
+					} // here
+				}
+			}
+		});
 	}
 }
 					
