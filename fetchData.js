@@ -1,9 +1,14 @@
 // to do
-// demon hunter check rankings by an alt char since you miss guild info
-// guildscan
+// demon hunter check rankings by an alt char since you miss guild info (dh's being freshly created lack all the past guild info)
 // could potentially have same issue on other toons due to created date
-// same shit
+// guildscan implement
+// decide whether if prev bosses should be added back till ragnaros? (as hc first kills)
 // search alts!
+// dont send the character achievement request data billion times for every single boss lookup
+// drop down realm list for eu/us
+// implement kr
+
+// [[[[--------------------------------Achievement Codes Guild and Personal -------------------- ------]]]]
 
 // var mistressGUild = 
 // var mistressPersonal =
@@ -22,15 +27,19 @@ var helyaGuild = 11404
 var guldanPersonal = 10850
 var guldanGuild = 11239
 
+
+// [[[[--------------------------------Initialize-------------------------------------------------------]]]]
 var divClone;
 var battleNetApiKey = "b7pycu6727tfgrnzawp6sn5bxeerh92z"; // Battle Net Api Key
 var warcraftLogsApiKey = "bff965ef8c377f175a671dacdbdbc822"; // Warcraftlogs Api Key
+var proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates crossorigin.me
 var clicked;
-var submitAlts = document.getElementById("alts");
+var submitAlts = document.getElementById("alts"); //why is this here?
 var altsHtml = "Alts \n\n"
 var playerGuilds = [];
 
-// var killStamps = [ convert kill timestamps to JSON when pool gets bigger
+// var killStamps = [ convert kill timestamps to JSON when pool gets bigger !! //discarded 
+// using txt files instead could potentially go back to json
 
 $(document).ready(function(){
 	submitAlts.innerHTML = "";
@@ -58,7 +67,7 @@ function toTitleCase(str){
 	return str.replace(/\w\S*/g, function(txt){
 		return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 	});
-	}
+}
 
 function upperCaseFirstL(word){
 	return word.charAt(0).toUpperCase() + word.slice(1);
@@ -159,7 +168,7 @@ function getClassName(id){
 	}		
 }
 
-function formatDate(string){ //timestamp
+function formatDate(string){ // convert to timestamp from Mar 06 2016 format
 	var date = string.substring(string.lastIndexOf('s"')+3, string.lastIndexOf('</')).replace(",","");
 	splitted = date.split(" ");
 	formattedJoin = getMonth(splitted[0]) + "/" + splitted[1] + "/" + splitted[2]
@@ -221,7 +230,8 @@ function blizzspaceToSpace(convertMe){
 	return convertMe.replace("%20", " ");
 }
 
-function getItemLevel(locale, realm, name , func){ //, div
+function getItemLevel(locale, realm, name , func){ // getItemLevel(locale, grabRealm, name, addAltx) is sent from the mainPane
+
 	var request;
 
 	if (locale == "EU")
@@ -240,7 +250,7 @@ function getItemLevel(locale, realm, name , func){ //, div
 				characterClass: classnm,
 				characterilvl: averageilvl
 			}
-			func(locale, realm, name, obj)	
+			func(locale, realm, name, obj)   //call to addAlt 
 		}	
 	});
 }
@@ -257,7 +267,7 @@ function addAltx(locale, realm, name, obj){ //, divid
 	var button = document.createElement("img");
 
 	button.style.border = "1.7px solid #000000"
-	button.src = "images/remove.png";
+	button.src = "images/remove2.png";
 	button.id = "button";
 	button.width = "11";
 	button.height = "11";
@@ -280,8 +290,6 @@ function addAltx(locale, realm, name, obj){ //, divid
 	div.appendChild(button);  //button on submission 
 	alts.appendChild(div);	
 
-
-	//push guilds
 }
 
 
@@ -299,6 +307,16 @@ function fixName(name){
 }
 
 function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
+
+
+	// Check if the player killed the given world of warcraft boss by blizz achievement api
+	// If no return else get killtimestamp
+	// search playerGuilds array and find which guild the player was in when he acquired the kill achievement (compare GuildJoin/Leave with killstamp)
+	// if the player was in a guild on when he acquired the achievement request that guild's achievement list and get boss kill timestamp
+	// compare player killstamp with guild's to see if player actually got the achievement within that guild (150k flex approx to 5 mins due to minimal delays on  possible playerstamps)
+	// get the guilds ranking from the relevant boss.txt
+	
+
 	var div = document.createElement("div");
 	var img = document.createElement("img");	
 	var text = document.createElement('td1');
@@ -308,7 +326,7 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 		if (fdata.achievements.achievementsCompleted[index] == personalAchiev)
 			break;
 	}
-	if (index != -1){
+	if (index != -1){   // keep this function bracket hell or use if == -1 return else do ur stuff (which could look way more elegant)
 		var stamp = fdata.achievements.achievementsCompletedTimestamp[index];
 		for (p = 0; p < playerGuilds.length ; p++){ 
 			if (stamp < playerGuilds[p].dateLeave && stamp > playerGuilds[p].dateJoin){ //matching guild
@@ -320,7 +338,8 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 				$.ajax({
 					async: true,
 					type: 'GET',
-					url: request,					
+					url: request,
+					
 					guildIndex: p,
 
 					success: function(aData) {
@@ -360,7 +379,7 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 									  	console.log("ff")
 			  						} 
 								});						
-							} // here
+							} // Hellfire
 						}
 					}
 				});
@@ -395,9 +414,8 @@ function mainPane(){
 	var locale = document.getElementById('locale').value;
 	var metric = document.getElementById('metric').value;
 	var img = document.createElement("img");
-	var proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates crossorigin.me
 	var url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
-	// var killStamps;
+
 	$.ajax({
 	  url: url,
 	  async: true,
@@ -412,13 +430,13 @@ function mainPane(){
 		var ilvl;
 		var lines = data.split("\n");
 		var lineLength = lines.length;
-		var merge = 0;
+		var merge = 0; // dont really use this anymore but could be needed when figuring out how to excludr merged character url request on alt character guild pushes
 		var k = 0;
 		document.getElementById("alts").innerHTML = "ALTS"; //Refresh on new submit
 		
 		for (i = 0; i < lineLength; i++){
 			if (lines[i].indexOf("<a href=\"/characters") != -1 ) { // ALTS
-				merge ++;
+				merge ++; 
 				var grab = lines[i].split("/");
 
 				ilvl=lines[i+1].substring(lines[i+1].lastIndexOf("<td>") + 4,lines[i+1].lastIndexOf("</td>"));
@@ -480,7 +498,7 @@ function mainPane(){
 					guildLocale : guildGrab[0].toLowerCase(), // KR RU locales
 					guildRealm : guildGrab[1].toLowerCase(),
 					guildName : gName,
-					dateJoin : formatDate(lines[i+2]),
+					dateJoin : formatDate(lines[i+2]), //converted to timestamps so it's easier to compare with blizz killstamps
 					dateLeave : dateLeave
 				}
 
@@ -518,7 +536,7 @@ function mainPane(){
 			}
 
 		});
-	   },
+	  },
 	  error: function (){ // Reset on fail
 	  	clicked = false;
 	  	$("#divid1").html(divClone); 
@@ -553,8 +571,8 @@ function mainPane(){
 	var div = document.createElement("div");
 	div.appendChild(img);
 
-	document.getElementById("characterPane").innerHTML="";
-	document.getElementById("characterPane").appendChild(div);
+	// document.getElementById("characterPane").innerHTML="";
+	// document.getElementById("characterPane").appendChild(div);
 
 	var artifactJSON = "https://raider.io/api/v1/characters/profile?region=" + locale + "&realm=" + realm + "&name=" + charName + "&fields=gear"; // <3
 
