@@ -364,8 +364,8 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 									    for (i=0 ; i < lineCount ; i++){
 											if (lines[i].trim() === playerGuilds[gIndex].guildLocale + playerGuilds[gIndex].guildRealm + playerGuilds[gIndex].guildName){ //temp fix??
 												rank = i + 1
-												img.src = "images/" + boss + ".jpg";
-												img.alt = boss+"_achiev";
+												img.src = "https://github.com/Saccarab/JF-WDDevelop/blob/gh-pages/images/" + boss + ".jpg";
+												img.alt = "https://github.com/Saccarab/JF-WDDevelop/blob/gh-pages/images/" + boss + ".jpg";
 												div.appendChild(img) //   
 												text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(playerGuilds[gIndex].guildName) + "-" + blizzspaceToSpace(playerGuilds[gIndex].guildRealm);
 												div.appendChild(text)
