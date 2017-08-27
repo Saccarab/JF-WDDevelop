@@ -407,7 +407,7 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 function mainPane(){
 
 	playerGuilds = [];
-	var kills = document.getElementById("kills").innerHTML = "Legion Raider.io First Kill Rankings\n"
+	var kills = document.getElementById("kills").innerHTML = "First Kill Rankings\n"
 	var charName = document.getElementById('char').value;
 	charName = fixName(charName);
 	var realm = toTitleCase(document.getElementById('realm').value).trim();
