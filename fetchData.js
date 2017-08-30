@@ -7,6 +7,7 @@
 // dont send the character achievement request data billion times for every single boss lookup
 // drop down realm list for eu/us
 // implement kr
+// multiple achievement request? https://puu.sh/xkAA7/740f385028.png wtf
 
 // [[[[--------------------------------Achievement Codes Guild and Personal -------------------- ------]]]]
 
@@ -365,7 +366,10 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 											if (lines[i].trim() === playerGuilds[gIndex].guildLocale + playerGuilds[gIndex].guildRealm + playerGuilds[gIndex].guildName){ //temp fix??
 												rank = i + 1
 												img.src = "images/" + boss + ".jpg";
-												img.alt = "https://github.com/Saccarab/JF-WDDevelop/blob/gh-pages/images/" + boss + ".jpg";
+												let temp = "https://github.com/Saccarab/JF-WDDevelop/blob/gh-pages/images/" + boss + ".jpg";
+												img.alt = '<img src =' + temp + '>'
+
+			
 												div.appendChild(img) //   
 												text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(playerGuilds[gIndex].guildName) + "-" + blizzspaceToSpace(playerGuilds[gIndex].guildRealm);
 												div.appendChild(text)
@@ -603,7 +607,7 @@ function mainPane(){
 
 		document.body.style.backgroundColor = "black";
 		var blizzString = document.getElementById("blizz").outerHTML;		
-		var pane = document.getElementById("characterPane").outerHTML
+		// var pane = document.getElementById("characterPane").outerHTML
 		var progressString = document.getElementById("progress").outerHTML;
 		var wlogsString = document.getElementById("wlogs").outerHTML;
 		var killsString = document.getElementById("kills").outerHTML;
@@ -614,7 +618,7 @@ function mainPane(){
 		if(clicked) /// this?  charName != "" && realm != "" && 
 			result.valid = true;
 
-		result.value = pane + blizzString + progressString + wlogsString + killsString + altsHtml ;
+		result.value = blizzString + progressString + wlogsString + killsString + altsHtml ;
 		result.valid = false;
 		JFCustomWidget.sendSubmit(result);
 
