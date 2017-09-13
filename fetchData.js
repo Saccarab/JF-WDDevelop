@@ -7,12 +7,15 @@
 // dont send the character achievement request data billion times for every single boss lookup
 // drop down realm list for eu/us
 // implement kr
+// swap var's with let
 // multiple achievement request? https://puu.sh/xkAA7/740f385028.png wtf
 
 // [[[[--------------------------------Achievement Codes Guild and Personal -------------------- ------]]]]
 
 // var mistressGUild = 
 // var mistressPersonal =
+
+// assigning array to another array as attribute
 var ragnarosPersonal = 5803
 var ragnarosGuild = 5984
 var imperatorPersonal = 8965
@@ -38,6 +41,7 @@ var clicked;
 var submitAlts = document.getElementById("alts"); //why is this here?
 var altsHtml = "Alts \n\n"
 var playerGuilds = [];
+var guildRequestList = [];
 
 // var killStamps = [ convert kill timestamps to JSON when pool gets bigger !! //discarded 
 // using txt files instead could potentially go back to json
@@ -320,33 +324,74 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 
 	var div = document.createElement("div");
 	var img = document.createElement("img");	
-	var text = document.createElement('td1');
+	var text = document.createElement('td1');  
 
 	var index = fdata.achievements.achievementsCompleted.length;
-	while (index-- && index >= 0){
+	while (index-- && index >= 0){  // findIndexfindIndexfindIndexfindIndexfindIndex
 		if (fdata.achievements.achievementsCompleted[index] == personalAchiev)
 			break;
 	}
-	if (index != -1){   // keep this function bracket hell or use if == -1 return else do ur stuff (which could look way more elegant)
-		var stamp = fdata.achievements.achievementsCompletedTimestamp[index];
+	if (index != -1){   // make this a function to avoid bracket hell or use if == -1 return else do ur stuff (which could look way more elegant)
+		var stamp = fdata.achievements.achievementsCompletedTimestamp[index]; //hoist the colors
+		var gIndex;
 		for (p = 0; p < playerGuilds.length ; p++){ 
 			if (stamp < playerGuilds[p].dateLeave && stamp > playerGuilds[p].dateJoin){ //matching guild
-				if ( playerGuilds[p].guildLocale == "eu")
+				for (k = 0; k < guildRequestList.length; k++){
+					if (guildRequestList[k].guildName === playerGuilds.guildName){
+						index = guildRequestList[k].completedArray.length;
+						while (index--){ //better search implementation than this shit?
+							if (guildRequestList[k].completedArray[index] === guildAchiev)
+								break;
+							if (index != -1){ //this could be functionized like if(killedtheboss)
+								var guildStamp = guildRequestList[k].timestamps[index];
+								var rank;	
+									if (Math.abs(stamp - guildStamp) <= 150000){ // SOOO REDUNDANT
+										$.ajax({
+											async: true,
+											type: 'GET',
+											url: "rankings/" + boss + ".txt",
+											success: function(sData){
+												var lines = sData.split("\n");
+												lineCount = lines.length;
+											    for (i=0 ; i < lineCount ; i++){
+													if (lines[i].trim() === playerGuilds[gIndex].guildLocale + playerGuilds[gIndex].guildRealm + playerGuilds[gIndex].guildName){ //temp fix??
+														rank = i + 1
+														img.src = "images/" + boss + ".jpg";
+														img.alt = boss
+														div.appendChild(img) //   
+														text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(playerGuilds[gIndex].guildName) + "-" + blizzspaceToSpace(playerGuilds[gIndex].guildRealm);
+														div.appendChild(text)
+														var kills = document.getElementById("kills");	
+														kills.appendChild(div)
+														return; //break;
+													}
+												}
+											},
+											error: function(){ 
+											  	console.log("ff")
+					  						} 
+										});						
+									}
+							}
+						}
+					}
+				}
+
+				if ( playerGuilds[p].guildLocale === "eu")
 					request = "https://eu.api.battle.net/wow/guild/" +  playerGuilds[p].guildRealm + "/" +  playerGuilds[p].guildName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
-				else if ( playerGuilds[p].guildLocale == "us")
+				else if ( playerGuilds[p].guildLocale === "us")
 					request = "https://us.api.battle.net/wow/guild/" +  playerGuilds[p].guildRealm + "/" +  playerGuilds[p].guildName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
 
 				$.ajax({
 					async: true,
 					type: 'GET',
 					url: request,
-					
 					guildIndex: p,
 
 					success: function(aData) {
 						
 						var gIndex = this.guildIndex;
-						var index = aData.achievements.achievementsCompleted.length;
+						index = aData.achievements.achievementsCompleted.length;
 						while (index--){
 							if (aData.achievements.achievementsCompleted[index] == guildAchiev)
 								break;
@@ -366,8 +411,8 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 											if (lines[i].trim() === playerGuilds[gIndex].guildLocale + playerGuilds[gIndex].guildRealm + playerGuilds[gIndex].guildName){ //temp fix??
 												rank = i + 1
 												img.src = "images/" + boss + ".jpg";
-												let temp = "https://github.com/Saccarab/JF-WDDevelop/blob/gh-pages/images/" + boss + ".jpg";
-												img.alt = '<img src =' + temp + '>'
+												// let temp = "https://github.com/Saccarab/JF-WDDevelop/blob/gh-pages/images/" + boss + ".jpg";
+												img.alt = boss
 
 			
 												div.appendChild(img) //   
@@ -375,8 +420,8 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 												div.appendChild(text)
 												var kills = document.getElementById("kills");	
 												kills.appendChild(div)
-												break;
-											}
+												return; //break
+											} 
 										}
 									},
 									error: function(){ 
@@ -557,23 +602,23 @@ function mainPane(){
 
 	// ---------------------------------------------------------------------First Kil Block ----------------------------------------------------
 
-	var base = "https://wowtrack.org/characters/"; //WowTrack character url body
+	// var base = "https://wowtrack.org/characters/"; //WowTrack character url body
 
-	img.onclick = function() {
-		var image = (buildTrackUrl(locale, realm, charName));
-		window.open(image);
+	// img.onclick = function() {
+	// 	var image = (buildTrackUrl(locale, realm, charName));
+	// 	window.open(image);
 
-	};
-	img.setAttribute('target', '_blank');
-	var response = "?response=signature&fields=progression,averageItemLevel,mythicDungeonLevel";
-	var realmNonSpace = realm.replace(" ", "%20");
-	img.src = base + locale + "/" + realmNonSpace + "/" + charName + response;
+	// };
+	// img.setAttribute('target', '_blank');
+	// var response = "?response=signature&fields=progression,averageItemLevel,mythicDungeonLevel";
+	// var realmNonSpace = realm.replace(" ", "%20");
+	// img.src = base + locale + "/" + realmNonSpace + "/" + charName + response;
 
-	img.href = "https://wowtrack.org/characters/" + locale + "/" + realmNonSpace + "/" + charName;
+	// img.href = "https://wowtrack.org/characters/" + locale + "/" + realmNonSpace + "/" + charName;
 	
-	img.alt = "Invalid Character";
-	var div = document.createElement("div");
-	div.appendChild(img);
+	// img.alt = "Invalid Character";
+	// var div = document.createElement("div");
+	// div.appendChild(img);
 
 	// document.getElementById("characterPane").innerHTML="";
 	// document.getElementById("characterPane").appendChild(div);
