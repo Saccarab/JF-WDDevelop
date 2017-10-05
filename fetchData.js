@@ -43,6 +43,7 @@ var submitAlts = document.getElementById("alts"); //why is this here?
 var altsHtml = "Alts \n\n"
 var playerGuilds = [];
 var guildRequestList = [];
+var altsArray = [];
 
 // var killStamps = [ convert kill timestamps to JSON when pool gets bigger !! //discarded 
 // using txt files instead could potentially go back to json
@@ -514,7 +515,15 @@ function mainPane(){
 				 		wClass = temp[2].replace("\"", "");
 				 		wClass = wClass.substring(wClass.indexOf("-") + 1, wClass.length);
 				 		wClass = wClass.replace("-"," ");
-				 		getItemLevel(locale, grabRealm, name, addAltx);
+				 		//could do seperate this line from the long req
+				 		getItemLevel(locale, grabRealm, name, addAltx); //add alt's guilds unless 1-2 ish week dif on guild join
+				 		
+				 		let altObj = { 
+							name: name,
+							locale: locale
+							realm: grabRealm
+						}
+						altsArray.push(altObj);
 				 	} 	
 				}
 			}
@@ -560,6 +569,15 @@ function mainPane(){
 			}
 			else{}//cnd
 		}
+		for (p = 0; p < altsArray.length ; p++){  //size = altsArray,length ? micromanage
+			let url = proxy + buildTrackUrl(locale, toTitleCase(grabRealm.replace("-", "%20")), name);
+	 		$.ajax({
+			  url: url,
+			  async: true,
+			  success: function(data){
+			  }; 
+			  
+			});
 
 		if (locale == "EU")
 			request = "https://eu.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
