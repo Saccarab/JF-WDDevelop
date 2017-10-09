@@ -15,8 +15,6 @@
 
 // var mistressGUild = 
 // var mistressPersonal =
-
-// assigning array to another array as attribute
 var ragnarosPersonal = 5803
 var ragnarosGuild = 5984
 var imperatorPersonal = 8965
@@ -43,7 +41,7 @@ var submitAlts = document.getElementById("alts"); //why is this here?
 var altsHtml = "Alts \n\n"
 var playerGuilds = [];
 var guildRequestList = [];
-var altsArray = [];
+var altsArray = []
 
 // var killStamps = [ convert kill timestamps to JSON when pool gets bigger !! //discarded 
 // using txt files instead could potentially go back to json
@@ -66,6 +64,7 @@ function buildArmoryLink(locale, realm, character){
 }
 
 function buildTrackUrl(locale, realm, character){ 
+	realm = realm.replace("-", "%20")
 	var track = "https://wowtrack.org/characters" + "/" + locale + "/"	 + realm + "/" + character; 
 	return track;
 }
@@ -324,65 +323,58 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 	// get the guilds ranking from the relevant boss.txt
 	
 
-	var div = document.createElement("div");
-	var img = document.createElement("img");	
-	var text = document.createElement('td1');  
+	let div = document.createElement("div");
+	let img = document.createElement("img");
+	let text = document.createElement('td1');
 
-	var index = fdata.achievements.achievementsCompleted.length;
-	while (index-- && index >= 0){  // findIndexfindIndexfindIndexfindIndexfindIndex
-		if (fdata.achievements.achievementsCompleted[index] == personalAchiev)
-			break;
-	}
+	let index = fdata.achievements.achievementsCompleted.indexOf(personalAchiev);
 	if (index != -1){   // make this a function to avoid bracket hell or use if == -1 return else do ur stuff (which could look way more elegant)
 		var stamp = fdata.achievements.achievementsCompletedTimestamp[index]; //hoist the colors
-		var gIndex;
-		for (p = 0; p < playerGuilds.length ; p++){ 
+		for (p = 0; p < playerGuilds.length ; p++){
 			if (stamp < playerGuilds[p].dateLeave && stamp > playerGuilds[p].dateJoin){ //matching guild
 				for (k = 0; k < guildRequestList.length; k++){
-					if (guildRequestList[k].guildName === playerGuilds.guildName){
-						index = guildRequestList[k].completedArray.length;
-						while (index--){ //better search implementation than this shit?
-							if (guildRequestList[k].completedArray[index] === guildAchiev)
-								break;
-							if (index != -1){ //this could be functionized like if(killedtheboss)
-								var guildStamp = guildRequestList[k].timestamps[index];
-								var rank;	
-									if (Math.abs(stamp - guildStamp) <= 150000){ // SOOO REDUNDANT
-										$.ajax({
-											async: true,
-											type: 'GET',
-											url: "rankings/" + boss + ".txt",
-											success: function(sData){
-												var lines = sData.split("\n");
-												lineCount = lines.length;
-											    for (i=0 ; i < lineCount ; i++){
-													if (lines[i].trim() === playerGuilds[gIndex].guildLocale + playerGuilds[gIndex].guildRealm + playerGuilds[gIndex].guildName){ //temp fix??
-														rank = i + 1
-														img.src = "images/" + boss + ".jpg";
-														img.alt = boss
-														div.appendChild(img) //   
-														text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(playerGuilds[gIndex].guildName) + "-" + blizzspaceToSpace(playerGuilds[gIndex].guildRealm);
-														div.appendChild(text)
-														var kills = document.getElementById("kills");	
-														kills.appendChild(div)
-														return; //break;
-													}
-												}
-											},
-											error: function(){ 
-											  	console.log("ff")
-					  						} 
-										});						
-									}
-							}
+					if (guildRequestList[k].guildName === playerGuilds[p].guildName){
+						let index = guildRequestList[k].completedArray.indexOf(guildAchiev)
+						if (index != -1){ //this could be functionized like if(killedtheboss)
+							var guildStamp = guildRequestList[k].timestamps[index];
+							var rank;	
+							if (Math.abs(stamp - guildStamp) <= 150000){ // SOOO REDUNDANT
+								$.ajax({
+									async: true,
+									type: 'GET',
+									guildIndex: p,
+									url: "rankings/" + boss + ".txt",
+									success: function(sData){
+										var lines = sData.split("\n");
+										let gIndex = this.guildIndex;
+										lineCount = lines.length;
+									    for (i=0 ; i < lineCount ; i++){
+											if (lines[i].trim() === playerGuilds[gIndex].guildLocale + playerGuilds[gIndex].guildRealm + playerGuilds[gIndex].guildName){ //temp fix??
+												rank = i + 1
+												img.src = "images/" + boss + ".jpg";
+												img.alt = boss
+												div.appendChild(img) //   
+												text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(playerGuilds[gIndex].guildName) + "-" + blizzspaceToSpace(playerGuilds[gIndex].guildRealm);
+												div.appendChild(text)
+												var kills = document.getElementById("kills");	
+												kills.appendChild(div)
+											}
+										}
+									},
+									error: function(){ 
+									  	console.log("ff")
+			  						} 
+								});	
+								return;		//reqli			
+							}								
 						}
 					}
 				}
-
 				if ( playerGuilds[p].guildLocale === "eu")
 					request = "https://eu.api.battle.net/wow/guild/" +  playerGuilds[p].guildRealm + "/" +  playerGuilds[p].guildName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
 				else if ( playerGuilds[p].guildLocale === "us")
 					request = "https://us.api.battle.net/wow/guild/" +  playerGuilds[p].guildRealm + "/" +  playerGuilds[p].guildName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
+
 
 				$.ajax({
 					async: true,
@@ -393,11 +385,20 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 					success: function(aData) {
 						
 						var gIndex = this.guildIndex;
-						index = aData.achievements.achievementsCompleted.length;
-						while (index--){
-							if (aData.achievements.achievementsCompleted[index] == guildAchiev)
-								break;
+
+						let obj = {
+							guildName : playerGuilds[gIndex].guildName,	
+							guildLocale : playerGuilds[gIndex].guildLocale,
+							guildRealm : playerGuilds[gIndex].guildRealm,
+							completedArray : aData.achievements.achievementsCompleted,
+							timestamps : aData.achievements.achievementsCompletedTimestamp
 						}
+
+						guildRequestList.push(obj);
+
+
+						let index = aData.achievements.achievementsCompleted.indexOf(guildAchiev)
+
 						if (index != -1){
 							var guildStamp = aData.achievements.achievementsCompletedTimestamp[index];
 							var rank;	
@@ -413,23 +414,20 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 											if (lines[i].trim() === playerGuilds[gIndex].guildLocale + playerGuilds[gIndex].guildRealm + playerGuilds[gIndex].guildName){ //temp fix??
 												rank = i + 1
 												img.src = "images/" + boss + ".jpg";
-												// let temp = "https://github.com/Saccarab/JF-WDDevelop/blob/gh-pages/images/" + boss + ".jpg";
 												img.alt = boss
-
-			
 												div.appendChild(img) //   
 												text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(playerGuilds[gIndex].guildName) + "-" + blizzspaceToSpace(playerGuilds[gIndex].guildRealm);
 												div.appendChild(text)
 												var kills = document.getElementById("kills");	
 												kills.appendChild(div)
-												return; //break
 											} 
 										}
 									},
 									error: function(){ 
 									  	console.log("ff")
 			  						} 
-								});						
+								});		
+								return;	//reqsiz			
 							} // Hellfire
 						}
 					}
@@ -439,25 +437,12 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 	}
 }
 					
-// function guildPushAlt(){
-
-// 	var proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates crossorigin.me make global l8r on
-// 	var url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
-// 	$.ajax({
-// 	  url: url,
-// 	  async: true,
-// 	  success: function(data){
-// 	  	var lines = data.split("\n");
-// 		var lineLength = lines.length;
-// 	  	if (lines[i].indexOf("guilds") != -1 )
-// 	  }
-// 	});
-
-// }
 
 function mainPane(){
 
 	playerGuilds = [];
+	altsArray = [];
+	guildRequestList = [];
 	var kills = document.getElementById("kills").innerHTML = "First Kill Rankings\n"
 	var charName = document.getElementById('char').value;
 	charName = fixName(charName);
@@ -466,7 +451,7 @@ function mainPane(){
 	var metric = document.getElementById('metric').value;
 	var img = document.createElement("img");
 	var url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
-
+	
 	$.ajax({
 	  url: url,
 	  async: true,
@@ -515,12 +500,11 @@ function mainPane(){
 				 		wClass = temp[2].replace("\"", "");
 				 		wClass = wClass.substring(wClass.indexOf("-") + 1, wClass.length);
 				 		wClass = wClass.replace("-"," ");
-				 		//could do seperate this line from the long req
-				 		getItemLevel(locale, grabRealm, name, addAltx); //add alt's guilds unless 1-2 ish week dif on guild join
-				 		
-				 		let altObj = { 
+				 		getItemLevel(locale, grabRealm, name, addAltx);
+
+				 		altObj = { 
 							name: name,
-							locale: locale
+							locale: locale,
 							realm: grabRealm
 						}
 						altsArray.push(altObj);
@@ -569,15 +553,60 @@ function mainPane(){
 			}
 			else{}//cnd
 		}
-		for (p = 0; p < altsArray.length ; p++){  //size = altsArray,length ? micromanage
-			let url = proxy + buildTrackUrl(locale, toTitleCase(grabRealm.replace("-", "%20")), name);
+		for (t = 0; t < altsArray.length ; t++){  //size = altsArray,length ? micromanage
+			let url = proxy + buildTrackUrl(altsArray[t].locale, altsArray[t].realm, altsArray[t].name);
 	 		$.ajax({
 			  url: url,
 			  async: true,
 			  success: function(data){
-			  }; 
+			  		let grab;
+					let lines = data.split("\n");
+					let lineLength = lines.length;
+					for (i = 0; i < lineLength; i++){
+						if (lines[i].indexOf("guilds") != -1 ){ //guilds
+							var d = new Date();
+							var n = d.getTime();
+							var guildGrab = lines[i].substring(lines[i].lastIndexOf("guilds")+7, lines[i].lastIndexOf('" '));
+							guildGrab = guildGrab.split("/");
+							var dateLeave = formatDate(lines[i+3]); //convert to stamp
+							if (isNaN(dateLeave)){
+								dateLeave = n
+							}
+							
+							var tempGrab = guildGrab[2].split("%20");
+							var tempSize = tempGrab.length;
+							var gName = ""
+
+							if (tempSize > 1){
+
+								for (g = 0; g < tempSize-1; g++){
+									gName = gName + tempGrab[g] + "%20"
+								}
+
+								gName = gName + tempGrab[tempSize-1];
+							}
+							else
+								gName = guildGrab[2]
+
+							guild = {
+								guildLocale : guildGrab[0].toLowerCase(), // KR RU locales
+								guildRealm : guildGrab[1].toLowerCase(),
+								guildName : gName,
+								dateJoin : formatDate(lines[i+2]), //converted to timestamps so it's easier to compare with blizz killstamps
+								dateLeave : dateLeave
+							}
+
+							if (k != 1) //missread on first catch
+								playerGuilds.push(guild); 
+							//Apr 29, 2016
+							// guildLeft = lines [i+3].substring(lines[i+3].lastIndexOf('s"')+3, lines[i+3].lastIndexOf('</'))							
+						}
+					}
+			  } 	
 			  
 			});
+		}
+
 
 		if (locale == "EU")
 			request = "https://eu.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
