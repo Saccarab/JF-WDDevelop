@@ -318,7 +318,7 @@ function asyncGet(guildElement, index, boss, callback){
 	let request;
 
 	if (guildElement.guildLocale === "eu") //func
-		request = "https://eu.api.battle.net/wow/guild/" +  pguildElement.guildRealm + "/" +  guildElement.guildName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
+		request = "https://eu.api.battle.net/wow/guild/" +  guildElement.guildRealm + "/" +  guildElement.guildName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
 	else if (guildElement.guildLocale === "us")
 		request = "https://us.api.battle.net/wow/guild/" +  guildElement.guildRealm + "/" +  guildElement.guildName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
 
@@ -378,13 +378,24 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 				}
 				else{
 
+					let obj = {
+						guildName : guildElement.guildName,	
+						guildLocale : guildElement.guildLocale,
+						guildRealm : guildElement.guildRealm,
+						completedArray : aData.achievements.achievementsCompleted,
+						timestamps : aData.achievements.achievementsCompletedTimestamp,
+						searchArr : []
+					}
+
 					let query = {
-						dateLeave : guildElement.dateLeave,
-						dateJoin : guildElement.dateJoin,
+						dateLeave : guildIter.dateLeave,
+						dateJoin : guildIter.dateJoin,
 						boss : boss
 					}
 
-					guildRequestList[elem].searchArr.push(query)
+					obj.searchArr(query);
+
+					guildRequestList.push(obj)
 				}
 			}	
 		});
