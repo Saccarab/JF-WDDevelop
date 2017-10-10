@@ -42,7 +42,8 @@ var altsHtml = "Alts \n\n"
 var playerGuilds = [];
 var guildRequestList = [];
 var altsArray = []
-
+var callbackCount = 0;
+var callCount = 0;
 // var killStamps = [ convert kill timestamps to JSON when pool gets bigger !! //discarded 
 // using txt files instead could potentially go back to json
 
@@ -312,137 +313,94 @@ function fixName(name){
 	return upperCaseFirstL(name.toLowerCase()).trim();
 }
 
-function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
+function asyncGet(guildElement, index, boss, callback){
+
+	let request;
+
+	if (guildElement.guildLocale === "eu") //func
+		request = "https://eu.api.battle.net/wow/guild/" +  pguildElement.guildRealm + "/" +  guildElement.guildName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
+	else if (guildElement.guildLocale === "us")
+		request = "https://us.api.battle.net/wow/guild/" +  guildElement.guildRealm + "/" +  guildElement.guildName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
+
+	$.ajax({
+		async: true,
+		type: 'GET',
+		url: request,
+
+		success: function(aData) {
+			
+			let obj = {
+				guildName : guildElement.guildName,	
+				guildLocale : guildElement.guildLocale,
+				guildRealm : guildElement.guildRealm,
+				completedArray : aData.achievements.achievementsCompleted,
+				timestamps : aData.achievements.achievementsCompletedTimestamp,
+				searchArr : []
+			}
+
+			let query = {
+				dateLeave : guildElement.dateLeave,
+				dateJoin : guildElement.dateJoin,
+				boss : boss
+			}
+
+			obj.searchArr.push(query);
+
+			guildRequestList.push(obj);
+		},
+
+		error: function() {
+            console.log('error for ' + guildElement.name);
+            callback();
+        }
+	});
+}
 
 
+function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){	
+	
+	let index = fdata.achievements.achievementsCompleted.indexOf(personalAchiev);
+	if (index != -1){   // make this a function to avoid bracket hell or use if == -1 return else do ur stuff (which could look way more elegant)
+		var stamp = fdata.achievements.achievementsCompletedTimestamp[index]; //hoist the colors
+		// for (p = 0; p < playerGuilds.length ; p++){
+		playerGuilds.forEach(function (guildIter, i){
+			if (stamp < guildIter.dateLeave && stamp > guild.dateJoin){
+
+				let elem = guildRequestList.map(function(e) { return e.guildName; }).indexOf(guildIter.guildName);
+
+				if (elem === -1){
+					callCount++;
+					asyncGet(guildIter, i, boss, function(){
+						callbackCount++;
+						if (callbackCount === callCount)
+							rank();
+					});
+				}
+				else{
+
+					let query = {
+						dateLeave : guildElement.dateLeave,
+						dateJoin : guildElement.dateJoin,
+						boss : boss
+					}
+
+					guildRequestList[elem].searchArr.push(query)
+				}
+			}	
+		});
+	}
+}
 	// Check if the player killed the given world of warcraft boss by blizz achievement api
 	// If no return else get killtimestamp
 	// search playerGuilds array and find which guild the player was in when he acquired the kill achievement (compare GuildJoin/Leave with killstamp)
 	// if the player was in a guild on when he acquired the achievement request that guild's achievement list and get boss kill timestamp
 	// compare player killstamp with guild's to see if player actually got the achievement within that guild (150k flex approx to 5 mins due to minimal delays on  possible playerstamps)
 	// get the guilds ranking from the relevant boss.txt
-	
-
-	let div = document.createElement("div");
-	let img = document.createElement("img");
-	let text = document.createElement('td1');
-
-	let index = fdata.achievements.achievementsCompleted.indexOf(personalAchiev);
-	if (index != -1){   // make this a function to avoid bracket hell or use if == -1 return else do ur stuff (which could look way more elegant)
-		var stamp = fdata.achievements.achievementsCompletedTimestamp[index]; //hoist the colors
-		for (p = 0; p < playerGuilds.length ; p++){
-			if (stamp < playerGuilds[p].dateLeave && stamp > playerGuilds[p].dateJoin){ //matching guild
-				for (k = 0; k < guildRequestList.length; k++){
-					if (guildRequestList[k].guildName === playerGuilds[p].guildName){
-						let index = guildRequestList[k].completedArray.indexOf(guildAchiev)
-						if (index != -1){ //this could be functionized like if(killedtheboss)
-							var guildStamp = guildRequestList[k].timestamps[index];
-							var rank;	
-							if (Math.abs(stamp - guildStamp) <= 150000){ // SOOO REDUNDANT
-								$.ajax({
-									async: true,
-									type: 'GET',
-									guildIndex: p,
-									url: "rankings/" + boss + ".txt",
-									success: function(sData){
-										var lines = sData.split("\n");
-										let gIndex = this.guildIndex;
-										lineCount = lines.length;
-									    for (i=0 ; i < lineCount ; i++){
-											if (lines[i].trim() === playerGuilds[gIndex].guildLocale + playerGuilds[gIndex].guildRealm + playerGuilds[gIndex].guildName){ //temp fix??
-												rank = i + 1
-												img.src = "images/" + boss + ".jpg";
-												img.alt = boss
-												div.appendChild(img) //   
-												text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(playerGuilds[gIndex].guildName) + "-" + blizzspaceToSpace(playerGuilds[gIndex].guildRealm);
-												div.appendChild(text)
-												var kills = document.getElementById("kills");	
-												kills.appendChild(div)
-											}
-										}
-									},
-									error: function(){ 
-									  	console.log("ff")
-			  						} 
-								});	
-								return;		//reqli			
-							}								
-						}
-					}
-				}
-				if ( playerGuilds[p].guildLocale === "eu")
-					request = "https://eu.api.battle.net/wow/guild/" +  playerGuilds[p].guildRealm + "/" +  playerGuilds[p].guildName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
-				else if ( playerGuilds[p].guildLocale === "us")
-					request = "https://us.api.battle.net/wow/guild/" +  playerGuilds[p].guildRealm + "/" +  playerGuilds[p].guildName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
-
-
-				$.ajax({
-					async: true,
-					type: 'GET',
-					url: request,
-					guildIndex: p,
-
-					success: function(aData) {
-						
-						var gIndex = this.guildIndex;
-
-						let obj = {
-							guildName : playerGuilds[gIndex].guildName,	
-							guildLocale : playerGuilds[gIndex].guildLocale,
-							guildRealm : playerGuilds[gIndex].guildRealm,
-							completedArray : aData.achievements.achievementsCompleted,
-							timestamps : aData.achievements.achievementsCompletedTimestamp
-						}
-
-						guildRequestList.push(obj);
-
-
-						let index = aData.achievements.achievementsCompleted.indexOf(guildAchiev)
-
-						if (index != -1){
-							var guildStamp = aData.achievements.achievementsCompletedTimestamp[index];
-							var rank;	
-							if (Math.abs(stamp - guildStamp) <= 150000){ // my first Kill is within 5 minutes of guilds kill 
-								$.ajax({
-									async: true,
-									type: 'GET',
-									url: "rankings/" + boss + ".txt",
-									success: function(sData){
-										var lines = sData.split("\n");
-										lineCount = lines.length;
-									    for (i=0 ; i < lineCount ; i++){
-											if (lines[i].trim() === playerGuilds[gIndex].guildLocale + playerGuilds[gIndex].guildRealm + playerGuilds[gIndex].guildName){ //temp fix??
-												rank = i + 1
-												img.src = "images/" + boss + ".jpg";
-												img.alt = boss
-												div.appendChild(img) //   
-												text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(playerGuilds[gIndex].guildName) + "-" + blizzspaceToSpace(playerGuilds[gIndex].guildRealm);
-												div.appendChild(text)
-												var kills = document.getElementById("kills");	
-												kills.appendChild(div)
-											} 
-										}
-									},
-									error: function(){ 
-									  	console.log("ff")
-			  						} 
-								});		
-								return;	//reqsiz			
-							} // Hellfire
-						}
-					}
-				});
-			}
-		}
-	}
-}
 					
 
 function mainPane(){
 
 	playerGuilds = [];
-	altsArray = [];
-	guildRequestList = [];
 	var kills = document.getElementById("kills").innerHTML = "First Kill Rankings\n"
 	var charName = document.getElementById('char').value;
 	charName = fixName(charName);
@@ -451,7 +409,8 @@ function mainPane(){
 	var metric = document.getElementById('metric').value;
 	var img = document.createElement("img");
 	var url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
-	
+	var altsArray = []
+
 	$.ajax({
 	  url: url,
 	  async: true,
@@ -718,3 +677,4 @@ function mainPane(){
 	});
 	
 }
+	
