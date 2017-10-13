@@ -10,6 +10,7 @@
 // swap var's with let
 // multiple achievement request? https://puu.sh/xkAA7/740f385028.png wtf
 // async.awaitas
+// allLoaded
 
 // [[[[--------------------------------Achievement Codes Guild and Personal -------------------- ------]]]]
 
