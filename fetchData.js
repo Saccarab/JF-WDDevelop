@@ -240,22 +240,22 @@ function getBossOrder(boss){
 
 	switch(boss){
 		case "guldan":
-			returnValue = 6
+			bossNo = 6
 			break;
 		case "helya":
-			returnValue = 5
+			bossNo = 5
 			break;
 		case "xavius":
-			returnValue = 4
+			bossNo = 4
 			break;
 		case "archimonde":
-			returnValue = 3
+			bossNo = 3
 			break;	
 		case "blackhand":
-			returnValue = 2
+			bossNo = 2
 			break;
 		case "imperator":
-			returnValue = 1
+			bossNo = 1
 			break;
 		default :
 			console.log("unknown boss stamp?");
@@ -397,7 +397,7 @@ function fill(){
 	fresh.forEach(function(ele, i){
 		asyncGet(ele, i, function(){
 			callbackCount++;
-			if (callbackCount === fresh){
+			if (callbackCount === size){
 				loopThrough()
 				return
 			}
@@ -465,8 +465,10 @@ function loopThrough(){
 	guildRequestList.forEach(function(guild){
 		fresh.forEach(function(grab){
 			if(guildEquals(guild, grab)){
-				let guildStamp = getStamp(grab.guildData)
-				let boss = guildRequestList.boss
+				let boss = guild.boss
+				let guildAch = eval(boss+'Guild');
+				let guildStamp = getStamp(guildAch,grab.guildData)
+				
 				let stamp = eval('stamps.'+boss+'Stamp')
 				if (Math.abs(stamp - guildStamp) <= 150000){ // my first Kill is within 5 minutes of guilds kill 
 					$.ajax({
@@ -737,8 +739,8 @@ function mainPane(){
 			success: function(data) { //dont send the data 6 times !! fix me
 
 				let obj = {
-					completedArray : fdata.achievements.achievementsCompleted,
-					timestamps : fdata.achievements.achievementsCompletedTimestamp
+					completedArray : data.achievements.achievementsCompleted,
+					timestamps : data.achievements.achievementsCompletedTimestamp
 				}
 
 				playerStamps(obj)
