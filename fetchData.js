@@ -376,8 +376,8 @@ function asyncGet(guildElement, index, callback){
 		success: function(aData) {	
 
 			let obj = {
-				completedArray = aData.achievements.achievementsCompleted,
-				timestamps = aData.achievements.achievementsCompletedTimestamp
+				completedArray : aData.achievements.achievementsCompleted,
+				timestamps : aData.achievements.achievementsCompletedTimestamp
 			}
 
 			fresh[index].guildData = obj;
@@ -478,7 +478,7 @@ function loopThrough(){
 							var lines = sData.split("\n");
 							lineCount = lines.length;
 							let rank;
-							
+
 						    for (i=0 ; i < lineCount ; i++){
 								if (lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){ //temp fix??
 									rank = i + 1
