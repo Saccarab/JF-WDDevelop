@@ -380,18 +380,18 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 		playerGuilds.forEach(function (guildIter, i){
 			if (stamp < guildIter.dateLeave && stamp > guildIter.dateJoin){
 				guildIter.boss = boss
-				guildRequestList.push(guildIter)
+				guildRequestList.push(JSON.parse(JSON.stringify(guildIter)))
 				delete guildIter.boss
 				delete guildIter.dateJoin
 				delete guildIter.dateLeave
-				uniqueRequest.push(guildIter.name)
+				uniqueRequest.push(guildIter)
 			}
 		});
 
 		fresh = uniqueRequest.map(function(e, index){
-			let count = 0;
+			let count = -1;
 			uniqueRequest.forEach(function(ele, idx){
-				if (JSON.stringify(ele) === JSON.stringify(e) && index !== idx)
+				if (JSON.stringify(ele) === JSON.stringify(e))
 					count ++
 
 				if (count == 0)
