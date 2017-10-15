@@ -472,18 +472,21 @@ function loopThrough(){
 					$.ajax({
 						async: true,
 						type: 'GET',
+						guild : guild,
 						url: "rankings/" + boss + ".txt",
 						success: function(sData){
 							var lines = sData.split("\n");
 							lineCount = lines.length;
+							let rank;
+							
 						    for (i=0 ; i < lineCount ; i++){
-								if (lines[i].trim() === guild.guildLocale + guild[gIndex].guildRealm + guild[gIndex].guildName){ //temp fix??
+								if (lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){ //temp fix??
 									rank = i + 1
 									img.src = "images/" + boss + ".jpg";
 									// let temp = "https://github.com/Saccarab/JF-WDDevelop/blob/gh-pages/images/" + boss + ".jpg";
 									img.alt = boss
 									div.appendChild(img) //   
-									text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(guild[gIndex].guildName) + "-" + blizzspaceToSpace(guild[gIndex].guildRealm);
+									text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guild.guildRealm);
 									div.appendChild(text)
 									var kills = document.getElementById("kills");	
 									kills.appendChild(div)
@@ -554,6 +557,7 @@ function mainPane(){
 	guildRequestList = [];
 	uniqueItems = [];
 	uniqueRequest = [];
+	stamps = [];
 
 	var kills = document.getElementById("kills").innerHTML = "First Kill Rankings\n"
 	var charName = document.getElementById('char').value;
