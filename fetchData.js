@@ -594,10 +594,15 @@ function guildRank(fdata, boss, personalAchiev){
 			if (stamp < guildIter.dateLeave && stamp > guildIter.dateJoin){
 				guildIter.boss = getBossOrder(boss);
 				guildRequestList.push(JSON.parse(JSON.stringify(guildIter)))
-				delete guildIter.dateJoin
+				let temp = guildIter.dateJoin
+				let temp2 = guildIter.dateLeave
+				delete guildIter.dateJoin //patchwerk
 				delete guildIter.dateLeave
 				delete guildIter.boss
-				uniqueRequest.push(guildIter)
+
+				guildIter.dateJoin = temp
+				guildIter.dateLeave = temp2
+				uniqueRequest.push(JSON.parse(JSON.stringify(guildIter)))
 			}
 		});
 
