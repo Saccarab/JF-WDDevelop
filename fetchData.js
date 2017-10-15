@@ -49,7 +49,7 @@ var callbackCount = 0
 var callCount = 0;
 var uniqueItems;
 var uniqueRequest;
-
+var stamps = []
 // var killStamps = [ convert kill timestamps to JSON when pool gets bigger !! //discarded 
 // using txt files instead could go back to json
 
@@ -234,6 +234,36 @@ function removeDiv(tag){
 	elem.parentNode.parentNode.removeChild(tag.parentNode);
 }
 
+
+function getBossOrder(boss){
+	let bossNo;
+
+	switch(boss){
+		case "guldan":
+			returnValue = 6
+			break;
+		case "helya":
+			returnValue = 5
+			break;
+		case "xavius":
+			returnValue = 4
+			break;
+		case "archimonde":
+			returnValue = 3
+			break;	
+		case "blackhand":
+			returnValue = 2
+			break;
+		case "imperator":
+			returnValue = 1
+			break;
+		default :
+			console.log("unknown boss stamp?");
+	}
+
+	return bossNo;
+}
+
 function spaceToBlizzspace(convertMe){
 	return convertMe.replace(" ", "%20");
 }
@@ -319,24 +349,40 @@ function fixName(name){
 	return upperCaseFirstL(name.toLowerCase()).trim();
 }
 
+function playerStamps(obj){
+
+	stamps.push({
+		guldanStamp : getStamp(guldanPersonal, obj),
+		helyaStamp : getStamp(helyaPersonal, obj),
+		xaviusStamp : getStamp(xaviusPersonal, obj),
+		archimondeStamp : getStamp(archimondePersonal, obj),
+		blackhandStamp : getStamp(blackhandPersonal, obj),
+		imperatorStamp : getStamp(imperatorPersonal, obj)
+	});
+}
 function asyncGet(guildElement, index, callback){
 
 	let request;
 
-	if (fresh[index] === "eu") //func
+	if (fresh[index].guildLocale === "eu") //func
 		request = "https://eu.api.battle.net/wow/guild/" +  guildElement.guildRealm + "/" +  guildElement.guildName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
-	else if (fresh[index] === "us")
+	else if (fresh[index].guildLocale === "us")
 		request = "https://us.api.battle.net/wow/guild/" +  guildElement.guildRealm + "/" +  guildElement.guildName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
 
 	$.ajax({
 		async: true,
 		type: 'GET',
 		url: request,
-		success: function(aData) {
-			
-			fresh[index].completedArray = aData.achievements.achievementsCompleted,
-			fresh[index].timestamps = aData.achievements.achievementsCompletedTimestamp,
+		success: function(aData) {	
+
+			let obj = {
+				completedArray = aData.achievements.achievementsCompleted,
+				timestamps = aData.achievements.achievementsCompletedTimestamp
+			}
+
+			fresh[index].guildData = obj;
 			callback();
+
 		},
 
 		error: function() {
@@ -346,9 +392,9 @@ function asyncGet(guildElement, index, callback){
 	});
 }
 
-function fill (){
+function fill(){
 	let size = fresh.length;
-	fresh.forEach(function(ele){
+	fresh.forEach(function(ele, i){
 		asyncGet(ele, i, function(){
 			callbackCount++;
 			if (callbackCount === fresh){
@@ -360,9 +406,101 @@ function fill (){
 	});
 }
 
-// funntion loopThrough(){
+function guildEquals(obj1, obj2){
+	if (obj1.guildName === obj2.guildName && obj1.guildLocale === obj2.guildLocale && obj1.guildRealm === obj2.guildRealm)
+		return true
+	else
+		return false
+}
 
-// }
+function guildCode(boss){
+	
+	let code;
+
+	switch(boss){
+		case 6:
+			code = guldanGuild
+			break;
+		case 5:
+			code = helyaGuild
+			break;
+		case 4:
+			code = xaviusGuild
+			break;
+		case 3:
+			code = archimondeGuild
+			break;	
+		case 2:
+			code = blackhandGuild
+			break;
+		case 1:
+			code = imperatorGuild;
+			break;
+		default :
+			console.log("unknown boss stamp?");
+	}
+
+	return code;
+
+}
+
+
+
+function getStamp(achievCode, obj){
+	
+	let stamp;
+	let index;
+
+	index = obj.completedArray.indexOf(achievCode);
+
+	if (index == -1)
+		stamp = -1;
+	else
+		stamp = obj.timestamps[index];
+
+	return stamp // -1 if not found??
+}	
+
+function loopThrough(){
+	guildRequestList.forEach(function(guild){
+		fresh.forEach(function(grab){
+			if(guildEquals(guild, grab)){
+				let guildStamp = getStamp(grab.guildData)
+				let boss = guildRequestList.boss
+				let stamp = eval('stamps.'+boss+'Stamp')
+				if (Math.abs(stamp - guildStamp) <= 150000){ // my first Kill is within 5 minutes of guilds kill 
+					$.ajax({
+						async: true,
+						type: 'GET',
+						url: "rankings/" + boss + ".txt",
+						success: function(sData){
+							var lines = sData.split("\n");
+							lineCount = lines.length;
+						    for (i=0 ; i < lineCount ; i++){
+								if (lines[i].trim() === guild.guildLocale + guild[gIndex].guildRealm + guild[gIndex].guildName){ //temp fix??
+									rank = i + 1
+									img.src = "images/" + boss + ".jpg";
+									// let temp = "https://github.com/Saccarab/JF-WDDevelop/blob/gh-pages/images/" + boss + ".jpg";
+									img.alt = boss
+									div.appendChild(img) //   
+									text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(guild[gIndex].guildName) + "-" + blizzspaceToSpace(guild[gIndex].guildRealm);
+									div.appendChild(text)
+									var kills = document.getElementById("kills");	
+									kills.appendChild(div)
+									
+								}
+							}
+						},
+						error: function(){ 
+						  	console.log("ff")
+  						} 
+					});						
+				} // Hellfire		
+			}
+		});
+	});
+}
+
 	// Check if the player killed the given world of warcraft boss by blizz achievement api
 	// If no return else get killtimestamp
 	// search playerGuilds array and find which guild the player was in when he acquired the kill achievement (compare GuildJoin/Leave with killstamp)
@@ -379,11 +517,12 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 		var stamp = fdata.achievements.achievementsCompletedTimestamp[index]; //hoist the colors
 		playerGuilds.forEach(function (guildIter, i){
 			if (stamp < guildIter.dateLeave && stamp > guildIter.dateJoin){
-				guildIter.boss = boss
-				guildRequestList.push(JSON.parse(JSON.stringify(guildIter)))
-				delete guildIter.boss
+				guildIter.boss = getBossOrder(boss);
 				delete guildIter.dateJoin
 				delete guildIter.dateLeave
+				guildRequestList.push(JSON.parse(JSON.stringify(guildIter)))
+				delete guildIter.boss
+				
 				uniqueRequest.push(guildIter)
 			}
 		});
@@ -400,7 +539,7 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 				uniqueRequest[index] = undefined		
 		});
 
-		fresh = fresh.filter(function( element ) {
+		fresh = fresh.filter(function( element ) { //shrink
 		   return element !== undefined;
 		});
 
@@ -586,15 +725,21 @@ function mainPane(){
 			request = "https://eu.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
 		else if (locale == "US")
 			request = "https://us.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
-	
-
-		 
 
 		$.ajax({
 			async: true,
 			type: 'GET',
 			url: request,
 			success: function(data) { //dont send the data 6 times !! fix me
+
+				let obj = {
+					completedArray : fdata.achievements.achievementsCompleted
+					timestamps : fdata.achievements.achievementsCompletedTimestamp
+				}
+
+				playerStamps(obj)
+
+
 				var gText = "   Nighthold Nightmare Mythic world rank ";
 				guildRank(data, "guldan", guldanPersonal, guldanGuild, gText)
 				gText = "Trial of Valor Mythic world rank "
@@ -608,6 +753,9 @@ function mainPane(){
 				gText = "   Highmaul Mythic world rank ";
 				guildRank(data, "imperator", imperatorPersonal, imperatorGuild, gText)
 
+				guildRequestList.sort(function(a, b)){
+					return b.boss - a.boss 
+				}
 
 				fill();
 
