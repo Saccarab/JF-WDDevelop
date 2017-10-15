@@ -737,7 +737,7 @@ function mainPane(){
 			success: function(data) { //dont send the data 6 times !! fix me
 
 				let obj = {
-					completedArray : fdata.achievements.achievementsCompleted
+					completedArray : fdata.achievements.achievementsCompleted,
 					timestamps : fdata.achievements.achievementsCompletedTimestamp
 				}
 
@@ -757,9 +757,9 @@ function mainPane(){
 				gText = "   Highmaul Mythic world rank ";
 				guildRank(data, "imperator", imperatorPersonal, imperatorGuild, gText)
 
-				guildRequestList.sort(function(a, b)){
+				guildRequestList.sort(function(a, b){
 					return b.boss - a.boss 
-				}
+				});
 
 				fill();
 
