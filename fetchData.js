@@ -264,6 +264,34 @@ function getBossOrder(boss){
 	return bossNo;
 }
 
+function getBossName(boss){
+	let bossName;
+
+	switch(boss){
+		case 6:
+			bossName = "guldan"
+			break;
+		case 5:
+			bossName = "helya"
+			break;
+		case 4:
+			bossName = "xavius"
+			break;
+		case 3:
+			bossName = "archimonde"
+			break;	
+		case 2:
+			bossName = "blackhand"
+			break;
+		case 1:
+			bossName = "imperator"
+			break;
+		default :
+			console.log("unknown boss name?");
+	}
+
+	return bossName;
+}
 function spaceToBlizzspace(convertMe){
 	return convertMe.replace(" ", "%20");
 }
@@ -465,7 +493,7 @@ function loopThrough(){
 	guildRequestList.forEach(function(guild){
 		fresh.forEach(function(grab){
 			if(guildEquals(guild, grab)){
-				let boss = guild.boss
+				let boss = getBossName(guild.boss)
 				let guildAch = eval(boss+'Guild');
 				let guildStamp = getStamp(guildAch,grab.guildData)
 				
