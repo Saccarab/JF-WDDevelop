@@ -8,9 +8,7 @@
 // drop down realm list for eu/us
 // implement kr
 // swap var's with let
-// multiple achievement request? https://puu.sh/xkAA7/740f385028.png wtf
-// async.awaitas
-// allLoaded
+// async.await ??
 
 // [[[[--------------------------------Achievement Codes Guild and Personal -------------------- ------]]]]
 
@@ -37,16 +35,23 @@ var divClone;
 var battleNetApiKey = "b7pycu6727tfgrnzawp6sn5bxeerh92z"; // Battle Net Api Key
 var warcraftLogsApiKey = "bff965ef8c377f175a671dacdbdbc822"; // Warcraftlogs Api Key
 var proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates crossorigin.me
+
 var clicked;
+
 var submitAlts = document.getElementById("alts"); //why is this here?
 var altsHtml = "Alts \n\n"
 var playerGuilds = [];
 var guildRequestList = [];
 var altsArray = []
-var callbackCount = 0;
+var fresh = [];
+var callbackCount = 0
+
 var callCount = 0;
+var uniqueItems;
+var uniqueRequest;
+
 // var killStamps = [ convert kill timestamps to JSON when pool gets bigger !! //discarded 
-// using txt files instead could potentially go back to json
+// using txt files instead could go back to json
 
 $(document).ready(function(){
 	submitAlts.innerHTML = "";
@@ -314,40 +319,24 @@ function fixName(name){
 	return upperCaseFirstL(name.toLowerCase()).trim();
 }
 
-function asyncGet(guildElement, index, boss, callback){
+function asyncGet(guildElement, index, callback){
 
 	let request;
 
-	if (guildElement.guildLocale === "eu") //func
+	if (fresh[index] === "eu") //func
 		request = "https://eu.api.battle.net/wow/guild/" +  guildElement.guildRealm + "/" +  guildElement.guildName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
-	else if (guildElement.guildLocale === "us")
+	else if (fresh[index] === "us")
 		request = "https://us.api.battle.net/wow/guild/" +  guildElement.guildRealm + "/" +  guildElement.guildName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
 
 	$.ajax({
 		async: true,
 		type: 'GET',
 		url: request,
-
 		success: function(aData) {
 			
-			let obj = {
-				guildName : guildElement.guildName,	
-				guildLocale : guildElement.guildLocale,
-				guildRealm : guildElement.guildRealm,
-				completedArray : aData.achievements.achievementsCompleted,
-				timestamps : aData.achievements.achievementsCompletedTimestamp,
-				searchArr : []
-			}
-
-			let query = {
-				dateLeave : guildElement.dateLeave,
-				dateJoin : guildElement.dateJoin,
-				boss : boss
-			}
-
-			obj.searchArr.push(query);
-
-			guildRequestList.push(obj);
+			fresh[index].completedArray = aData.achievements.achievementsCompleted,
+			fresh[index].timestamps = aData.achievements.achievementsCompletedTimestamp,
+			callback();
 		},
 
 		error: function() {
@@ -357,51 +346,23 @@ function asyncGet(guildElement, index, boss, callback){
 	});
 }
 
-
-function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){	
-	
-	let index = fdata.achievements.achievementsCompleted.indexOf(personalAchiev);
-	if (index != -1){   // make this a function to avoid bracket hell or use if == -1 return else do ur stuff (which could look way more elegant)
-		var stamp = fdata.achievements.achievementsCompletedTimestamp[index]; //hoist the colors
-		// for (p = 0; p < playerGuilds.length ; p++){
-		playerGuilds.forEach(function (guildIter, i){
-			if (stamp < guildIter.dateLeave && stamp > guild.dateJoin){
-
-				let elem = guildRequestList.map(function(e) { return e.guildName; }).indexOf(guildIter.guildName);
-
-				if (elem === -1){
-					callCount++;
-					asyncGet(guildIter, i, boss, function(){
-						callbackCount++;
-						if (callbackCount === callCount)
-							rank();
-					});
-				}
-				else{
-
-					let obj = {
-						guildName : guildElement.guildName,	
-						guildLocale : guildElement.guildLocale,
-						guildRealm : guildElement.guildRealm,
-						completedArray : aData.achievements.achievementsCompleted,
-						timestamps : aData.achievements.achievementsCompletedTimestamp,
-						searchArr : []
-					}
-
-					let query = {
-						dateLeave : guildIter.dateLeave,
-						dateJoin : guildIter.dateJoin,
-						boss : boss
-					}
-
-					obj.searchArr(query);
-
-					guildRequestList.push(obj)
-				}
-			}	
+function fill (){
+	let size = fresh.length;
+	fresh.forEach(function(ele){
+		asyncGet(ele, i, function(){
+			callbackCount++;
+			if (callbackCount === fresh){
+				loopThrough()
+				return
+			}
 		});
-	}
+		
+	});
 }
+
+// funntion loopThrough(){
+
+// }
 	// Check if the player killed the given world of warcraft boss by blizz achievement api
 	// If no return else get killtimestamp
 	// search playerGuilds array and find which guild the player was in when he acquired the kill achievement (compare GuildJoin/Leave with killstamp)
@@ -409,10 +370,52 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 	// compare player killstamp with guild's to see if player actually got the achievement within that guild (150k flex approx to 5 mins due to minimal delays on  possible playerstamps)
 	// get the guilds ranking from the relevant boss.txt
 					
+	// 10.14.2017 usin async data load then loop from now on to do less requests overall
+
+function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){	
+	
+	let index = fdata.achievements.achievementsCompleted.indexOf(personalAchiev);
+	if (index != -1){   // make this a function to avoid bracket hell or use if == -1 return else do ur stuff (which could look way more elegant)
+		var stamp = fdata.achievements.achievementsCompletedTimestamp[index]; //hoist the colors
+		playerGuilds.forEach(function (guildIter, i){
+			if (stamp < guildIter.dateLeave && stamp > guildIter.dateJoin){
+				guildIter.boss = boss
+				guildRequestList.push(guildIter)
+				delete guildIter.boss
+				delete guildIter.dateJoin
+				delete guildIter.dateLeave
+				uniqueRequest.push(guildIter.name)
+			}
+		});
+
+		fresh = uniqueRequest.map(function(e, index){
+			let count = 0;
+			uniqueRequest.forEach(function(ele, idx){
+				if (JSON.stringify(ele) === JSON.stringify(e) && index !== idx)
+					count ++
+
+				if (count == 0)
+					return e;
+			});
+			
+		});
+
+		fresh = fresh.filter(function( element ) {
+		   return element !== undefined;
+		});
+
+	}
+}
 
 function mainPane(){
 
+	fresh = []
 	playerGuilds = [];
+	altsArray = [];
+	guildRequestList = [];
+	uniqueItems = [];
+	uniqueRequest = [];
+
 	var kills = document.getElementById("kills").innerHTML = "First Kill Rankings\n"
 	var charName = document.getElementById('char').value;
 	charName = fixName(charName);
@@ -421,8 +424,8 @@ function mainPane(){
 	var metric = document.getElementById('metric').value;
 	var img = document.createElement("img");
 	var url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
-	var altsArray = []
-
+	callCount = 0;
+	callbackCount = 0;
 	$.ajax({
 	  url: url,
 	  async: true,
@@ -584,6 +587,9 @@ function mainPane(){
 		else if (locale == "US")
 			request = "https://us.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
 	
+
+		 
+
 		$.ajax({
 			async: true,
 			type: 'GET',
@@ -601,6 +607,10 @@ function mainPane(){
 				guildRank(data, "blackhand", blackhandPersonal, blackhandGuild, gText)
 				gText = "   Highmaul Mythic world rank ";
 				guildRank(data, "imperator", imperatorPersonal, imperatorGuild, gText)
+
+
+				fill();
+
 			}
 
 		});
