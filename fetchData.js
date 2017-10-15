@@ -9,6 +9,7 @@
 // implement kr
 // swap var's with let
 // async.await ??
+// all the patchwerk solutions
 
 // [[[[--------------------------------Achievement Codes Guild and Personal -------------------- ------]]]]
 
@@ -269,7 +270,7 @@ function getBossText(boss) {
 
 	switch(boss){
 		case "guldan": 
-			bossText =  " Nighthold Mythic world rank"
+			bossText =  " Nighthold Mythic world rank "
 			break;
 		case "helya":
 			bossText = "    Trial of Valor Mythic world rank "
@@ -519,49 +520,59 @@ function getStamp(achievCode, obj){
 }	
 
 function loopThrough(){
+	let list = [1,2,3,4,5,6];
 	guildRequestList.forEach(function(guild){
-		fresh.forEach(function(grab){
-			if(guildEquals(guild, grab)){
-				let boss = getBossName(guild.boss)
-				let guildAch = eval(boss+'Guild');
-				let guildStamp = getStamp(guildAch,grab.guildData)
-				
-				let stamp = eval('stamps.'+boss+'Stamp')
-				if (Math.abs(stamp - guildStamp) <= 150000){ // my first Kill is within 5 minutes of guilds kill 
-					$.ajax({
-						async: true,
-						type: 'GET',
-						guild : guild,
-						url: "rankings/" + boss + ".txt",
-						success: function(sData){
-							let div = document.createElement("div");
-							let img = document.createElement("img");	
-							let text = document.createElement('td1');
-							let lines = sData.split("\n");
-							lineCount = lines.length;
-							let rank;
+		let check = guild.boss;
+		if (list.includes(check)){
+			fresh.forEach(function(grab){
+				if (list.includes(check)){
+					if(guildEquals(guild, grab)){
+						let boss = getBossName(guild.boss)
+						let guildAch = eval(boss+'Guild'); //patchwerk
+						let guildStamp = getStamp(guildAch,grab.guildData)
 
-						    for (i=0 ; i < lineCount ; i++){
-								if (lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){ //temp fix??
-									rank = i + 1
-									img.src = "images/" + boss + ".jpg";
-									img.alt = boss
-									div.appendChild(img) //   
-									text.innerHTML = getBossText(boss) + rank + " in guild " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guild.guildRealm);
-									div.appendChild(text)
-									let kills = document.getElementById("kills");	
-									kills.appendChild(div)
-									
-								}
-							}
-						},
-						error: function(){ 
-						  	console.log("ff")
-  						} 
-					});						
-				} // Hellfire		
-			}
-		});
+						let stamp = eval('stamps.'+boss+'Stamp')
+						if (Math.abs(stamp - guildStamp) <= 150000){ // my first Kill is within 5 minutes of guilds kill 
+							let deleteItem = list.indexOf(guild.boss) //patchwerk
+							delete list[deleteItem]
+							$.ajax({
+								async: true,
+								type: 'GET',
+								guild : guild,
+								url: "rankings/" + boss + ".txt",
+								success: function(sData){
+									let div = document.createElement("div");
+									let img = document.createElement("img");	
+									let text = document.createElement('td1');
+									let lines = sData.split("\n");
+									lineCount = lines.length;
+									let rank;
+
+									for (i=0 ; i < lineCount ; i++){
+										if (lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){ //temp fix??
+											rank = i + 1
+											img.src = "images/" + boss + ".jpg";
+											img.alt = boss
+											div.appendChild(img) //   
+											text.innerHTML = getBossText(boss) + rank + " in guild " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guild.guildRealm);
+											div.appendChild(text)
+											let kills = document.getElementById("kills");	
+											kills.appendChild(div)
+
+										}
+									}
+								},
+								error: function(){ 
+									console.log("ff")
+								} 
+							});	
+						}	
+						else return;				
+					} // Hellfire		
+				}
+			});
+		}
+		else return;
 	});
 }
 
@@ -582,11 +593,10 @@ function guildRank(fdata, boss, personalAchiev){
 		playerGuilds.forEach(function (guildIter, i){
 			if (stamp < guildIter.dateLeave && stamp > guildIter.dateJoin){
 				guildIter.boss = getBossOrder(boss);
+				guildRequestList.push(JSON.parse(JSON.stringify(guildIter)))
 				delete guildIter.dateJoin
 				delete guildIter.dateLeave
-				guildRequestList.push(JSON.parse(JSON.stringify(guildIter)))
 				delete guildIter.boss
-				
 				uniqueRequest.push(guildIter)
 			}
 		});
