@@ -392,12 +392,12 @@ function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){
 			let count = -1;
 			uniqueRequest.forEach(function(ele, idx){
 				if (JSON.stringify(ele) === JSON.stringify(e))
-					count ++
-
-				if (count == 0)
-					return e;
+					count ++	
 			});
-			
+			if (count == 0)
+				return e;
+			else
+				uniqueRequest[index] = undefined		
 		});
 
 		fresh = fresh.filter(function( element ) {
