@@ -49,7 +49,7 @@ var callbackCount = 0
 var callCount = 0;
 var uniqueItems;
 var uniqueRequest;
-var stamps = []
+var stamps
 // var killStamps = [ convert kill timestamps to JSON when pool gets bigger !! //discarded 
 // using txt files instead could go back to json
 
@@ -264,6 +264,35 @@ function getBossOrder(boss){
 	return bossNo;
 }
 
+function getBossText(boss) {
+	let bossText;
+
+	switch(boss){
+		case "guldan": 
+			bossText =  " Nighthold Mythic world rank"
+			break;
+		case "helya":
+			bossText = "    Trial of Valor Mythic world rank "
+			break;
+		case "xavius":
+			bossText =  "   Emerald Nightmare Mythic world rank ";
+			break;
+		case "archimonde":
+			bossText = "   Hellfire Citadel Mythic world rank ";
+			break;	
+		case "blackhand":
+			bossText = "   Blackrock Foundry Mythic world rank ";
+			break;
+		case "imperator":
+			bossText = "   Highmaul Mythic world rank ";
+			break;
+		default :
+			console.log("unknown boss text?");
+	}
+
+	return bossText;
+}
+
 function getBossName(boss){
 	let bossName;
 
@@ -379,14 +408,14 @@ function fixName(name){
 
 function playerStamps(obj){
 
-	stamps.push({
+	stamps = {
 		guldanStamp : getStamp(guldanPersonal, obj),
 		helyaStamp : getStamp(helyaPersonal, obj),
 		xaviusStamp : getStamp(xaviusPersonal, obj),
 		archimondeStamp : getStamp(archimondePersonal, obj),
 		blackhandStamp : getStamp(blackhandPersonal, obj),
 		imperatorStamp : getStamp(imperatorPersonal, obj)
-	});
+	}
 }
 function asyncGet(guildElement, index, callback){
 
@@ -505,7 +534,10 @@ function loopThrough(){
 						guild : guild,
 						url: "rankings/" + boss + ".txt",
 						success: function(sData){
-							var lines = sData.split("\n");
+							let div = document.createElement("div");
+							let img = document.createElement("img");	
+							let text = document.createElement('td1');
+							let lines = sData.split("\n");
 							lineCount = lines.length;
 							let rank;
 
@@ -513,12 +545,11 @@ function loopThrough(){
 								if (lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){ //temp fix??
 									rank = i + 1
 									img.src = "images/" + boss + ".jpg";
-									// let temp = "https://github.com/Saccarab/JF-WDDevelop/blob/gh-pages/images/" + boss + ".jpg";
 									img.alt = boss
 									div.appendChild(img) //   
-									text.innerHTML = rankText + rank + " in guild " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guild.guildRealm);
+									text.innerHTML = getBossText(boss) + rank + " in guild " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guild.guildRealm);
 									div.appendChild(text)
-									var kills = document.getElementById("kills");	
+									let kills = document.getElementById("kills");	
 									kills.appendChild(div)
 									
 								}
@@ -543,7 +574,7 @@ function loopThrough(){
 					
 	// 10.14.2017 usin async data load then loop from now on to do less requests overall
 
-function guildRank(fdata, boss, personalAchiev, guildAchiev, rankText){	
+function guildRank(fdata, boss, personalAchiev){
 	
 	let index = fdata.achievements.achievementsCompleted.indexOf(personalAchiev);
 	if (index != -1){   // make this a function to avoid bracket hell or use if == -1 return else do ur stuff (which could look way more elegant)
@@ -773,19 +804,12 @@ function mainPane(){
 
 				playerStamps(obj)
 
-
-				var gText = "   Nighthold Nightmare Mythic world rank ";
-				guildRank(data, "guldan", guldanPersonal, guldanGuild, gText)
-				gText = "Trial of Valor Mythic world rank "
-				guildRank(data, "helya", helyaPersonal, helyaGuild, gText)
-				gText = "   Emerald Nightmare Mythic world rank ";
-				guildRank(data, "xavius", xaviusPersonal, xaviusGuild, gText)
-				gText = "   Hellfire Citadel Mythic world rank ";
-				guildRank(data, "archimonde", archimondePersonal, archimondeGuild, gText)
-				gText = "   Blackrock Foundry Mythic world rank ";
-				guildRank(data, "blackhand", blackhandPersonal, blackhandGuild, gText)
-				gText = "   Highmaul Mythic world rank ";
-				guildRank(data, "imperator", imperatorPersonal, imperatorGuild, gText)
+				guildRank(data, "guldan", guldanPersonal)
+				guildRank(data, "helya", helyaPersonal)
+				guildRank(data, "xavius", xaviusPersonal)
+				guildRank(data, "archimonde", archimondePersonal)
+				guildRank(data, "blackhand", blackhandPersonal)
+				guildRank(data, "imperator", imperatorPersonal)
 
 				guildRequestList.sort(function(a, b){
 					return b.boss - a.boss 
