@@ -267,7 +267,7 @@ function getBossOrder(boss){
 	return bossNo;
 }
 
-function readToon(url){
+function readToon(url, callback){
 	$.ajax({
 	  url: url,
 	  async: true,
@@ -326,8 +326,53 @@ function readToon(url){
 			}
 			//callback()
 			//handle error??
-	  } 	
+	  	callback();
+	  },
+	  error: function(){
+	  	console.log("error while reading toon");
+	  	callback();
+	  }	
 		  
+	});
+}
+
+function rankings(){
+
+	if (locale == "EU")
+		request = "https://eu.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
+	else if (locale == "US")
+		request = "https://us.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
+	else
+		console.log("unknown error") //use more of these??
+
+	$.ajax({
+		async: true,
+		type: 'GET',
+		url: request,
+		success: function(data) { //dont send the data 6 times !! fix me
+
+			let obj = {
+				completedArray : data.achievements.achievementsCompleted,
+				timestamps : data.achievements.achievementsCompletedTimestamp
+			}
+
+			playerStamps(obj)
+
+			guildRank(data, "guldan", guldanPersonal)
+			guildRank(data, "helya", helyaPersonal)
+			guildRank(data, "xavius", xaviusPersonal)
+			guildRank(data, "archimonde", archimondePersonal)
+			guildRank(data, "blackhand", blackhandPersonal)
+			guildRank(data, "imperator", imperatorPersonal)
+
+			guildRequestList.sort(function(a, b){
+				return b.boss - a.boss 
+			});
+
+			fill();
+
+		}
+
 	});
 }
 function getBossText(boss) {
@@ -812,48 +857,24 @@ function mainPane(){
 			else{}//cnd
 		}
 
+		let altLength = altsArray.length;
 
+		altsArray.forEach(function(alt){
+			let url = proxy + buildTrackUrl(alt.locale, alt.realm, alt.name);
+			readToon(url, function(){
+				calLCount ++;
+				if (callCount === altLength){
+					rankings()
+					return
+				}
+			})
+		});
 
 		for (t = 0; t < altsArray.length ; t++){  //size = altsArray,length ? micromanage
 			let url = proxy + buildTrackUrl(altsArray[t].locale, altsArray[t].realm, altsArray[t].name);
 	 		readToon(url)
 		}
 
-
-		if (locale == "EU")
-			request = "https://eu.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
-		else if (locale == "US")
-			request = "https://us.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_US&apikey=" + battleNetApiKey;
-
-		$.ajax({
-			async: true,
-			type: 'GET',
-			url: request,
-			success: function(data) { //dont send the data 6 times !! fix me
-
-				let obj = {
-					completedArray : data.achievements.achievementsCompleted,
-					timestamps : data.achievements.achievementsCompletedTimestamp
-				}
-
-				playerStamps(obj)
-
-				guildRank(data, "guldan", guldanPersonal)
-				guildRank(data, "helya", helyaPersonal)
-				guildRank(data, "xavius", xaviusPersonal)
-				guildRank(data, "archimonde", archimondePersonal)
-				guildRank(data, "blackhand", blackhandPersonal)
-				guildRank(data, "imperator", imperatorPersonal)
-
-				guildRequestList.sort(function(a, b){
-					return b.boss - a.boss 
-				});
-
-				fill();
-
-			}
-
-		});
 	  },
 	  error: function (){ // Reset on fail
 	  	clicked = false;
