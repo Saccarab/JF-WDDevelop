@@ -265,6 +265,60 @@ function getBossOrder(boss){
 	return bossNo;
 }
 
+function readToon(url){
+	$.ajax({
+	  url: url,
+	  async: true,
+	  success: function(data){
+	  		let grab;
+	  		let k = 0;
+			let lines = data.split("\n");
+			let lineLength = lines.length;
+			for (i = 0; i < lineLength; i++){
+				if (lines[i].indexOf("guilds") != -1 ){ //guilds
+					k++;
+					var d = new Date();
+					var n = d.getTime();
+					var guildGrab = lines[i].substring(lines[i].lastIndexOf("guilds")+7, lines[i].lastIndexOf('" '));
+					guildGrab = guildGrab.split("/");
+					var dateLeave = formatDate(lines[i+3]); //convert to stamp
+					if (isNaN(dateLeave)){
+						dateLeave = n
+					}
+					
+					var tempGrab = guildGrab[2].split("%20");
+					var tempSize = tempGrab.length;
+					var gName = ""
+
+					if (tempSize > 1){
+
+						for (g = 0; g < tempSize-1; g++){
+							gName = gName + tempGrab[g] + "%20"
+						}
+
+						gName = gName + tempGrab[tempSize-1];
+					}
+					else
+						gName = guildGrab[2]
+
+					guild = {
+						guildLocale : guildGrab[0].toLowerCase(), // KR RU locales
+						guildRealm : guildGrab[1].toLowerCase(),
+						guildName : gName,
+						dateJoin : formatDate(lines[i+2]), //converted to timestamps so it's easier to compare with blizz killstamps
+						dateLeave : dateLeave
+					}
+
+					if (k != 1) //missread on first catch
+						playerGuilds.push(guild); 
+					//Apr 29, 2016
+					// guildLeft = lines [i+3].substring(lines[i+3].lastIndexOf('s"')+3, lines[i+3].lastIndexOf('</'))							
+				}
+			}
+	  } 	
+		  
+	});
+}
 function getBossText(boss) {
 	let bossText;
 
@@ -599,10 +653,10 @@ function guildRank(fdata, boss, personalAchiev){
 				delete guildIter.dateJoin //patchwerk
 				delete guildIter.dateLeave
 				delete guildIter.boss
-
+				uniqueRequest.push(JSON.parse(JSON.stringify(guildIter)))
 				guildIter.dateJoin = temp
 				guildIter.dateLeave = temp2
-				uniqueRequest.push(JSON.parse(JSON.stringify(guildIter)))
+				
 			}
 		});
 
@@ -746,58 +800,12 @@ function mainPane(){
 			}
 			else{}//cnd
 		}
+
+
+
 		for (t = 0; t < altsArray.length ; t++){  //size = altsArray,length ? micromanage
 			let url = proxy + buildTrackUrl(altsArray[t].locale, altsArray[t].realm, altsArray[t].name);
-	 		$.ajax({
-			  url: url,
-			  async: true,
-			  success: function(data){
-			  		let grab;
-					let lines = data.split("\n");
-					let lineLength = lines.length;
-					for (i = 0; i < lineLength; i++){
-						if (lines[i].indexOf("guilds") != -1 ){ //guilds
-							var d = new Date();
-							var n = d.getTime();
-							var guildGrab = lines[i].substring(lines[i].lastIndexOf("guilds")+7, lines[i].lastIndexOf('" '));
-							guildGrab = guildGrab.split("/");
-							var dateLeave = formatDate(lines[i+3]); //convert to stamp
-							if (isNaN(dateLeave)){
-								dateLeave = n
-							}
-							
-							var tempGrab = guildGrab[2].split("%20");
-							var tempSize = tempGrab.length;
-							var gName = ""
-
-							if (tempSize > 1){
-
-								for (g = 0; g < tempSize-1; g++){
-									gName = gName + tempGrab[g] + "%20"
-								}
-
-								gName = gName + tempGrab[tempSize-1];
-							}
-							else
-								gName = guildGrab[2]
-
-							guild = {
-								guildLocale : guildGrab[0].toLowerCase(), // KR RU locales
-								guildRealm : guildGrab[1].toLowerCase(),
-								guildName : gName,
-								dateJoin : formatDate(lines[i+2]), //converted to timestamps so it's easier to compare with blizz killstamps
-								dateLeave : dateLeave
-							}
-
-							if (k != 1) //missread on first catch
-								playerGuilds.push(guild); 
-							//Apr 29, 2016
-							// guildLeft = lines [i+3].substring(lines[i+3].lastIndexOf('s"')+3, lines[i+3].lastIndexOf('</'))							
-						}
-					}
-			  } 	
-			  
-			});
+	 		readToon(url)
 		}
 
 
@@ -919,5 +927,6 @@ function mainPane(){
 
 	});
 	
+
 }
 	
