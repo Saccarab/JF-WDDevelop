@@ -870,11 +870,6 @@ function mainPane(){
 			})
 		});
 
-		for (t = 0; t < altsArray.length ; t++){  //size = altsArray,length ? micromanage
-			let url = proxy + buildTrackUrl(altsArray[t].locale, altsArray[t].realm, altsArray[t].name);
-	 		readToon(url)
-		}
-
 	  },
 	  error: function (){ // Reset on fail
 	  	clicked = false;
