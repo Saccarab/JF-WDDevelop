@@ -29,7 +29,9 @@ var helyaPersonal = 11398
 var helyaGuild = 11404
 var guldanPersonal = 10850
 var guldanGuild = 11239
-
+var charName;
+var realm;
+var locale;
 
 // [[[[--------------------------------Initialize-------------------------------------------------------]]]]
 var divClone;
@@ -277,18 +279,18 @@ function readToon(url){
 			for (i = 0; i < lineLength; i++){
 				if (lines[i].indexOf("guilds") != -1 ){ //guilds
 					k++;
-					var d = new Date();
-					var n = d.getTime();
-					var guildGrab = lines[i].substring(lines[i].lastIndexOf("guilds")+7, lines[i].lastIndexOf('" '));
+					let d = new Date();
+					let n = d.getTime();
+					let guildGrab = lines[i].substring(lines[i].lastIndexOf("guilds")+7, lines[i].lastIndexOf('" '));
 					guildGrab = guildGrab.split("/");
 					var dateLeave = formatDate(lines[i+3]); //convert to stamp
 					if (isNaN(dateLeave)){
 						dateLeave = n
 					}
 					
-					var tempGrab = guildGrab[2].split("%20");
-					var tempSize = tempGrab.length;
-					var gName = ""
+					let tempGrab = guildGrab[2].split("%20");
+					let tempSize = tempGrab.length;
+					let gName = ""
 
 					if (tempSize > 1){
 
@@ -310,11 +312,20 @@ function readToon(url){
 					}
 
 					if (k != 1) //missread on first catch
-						playerGuilds.push(guild); 
-					//Apr 29, 2016
-					// guildLeft = lines [i+3].substring(lines[i+3].lastIndexOf('s"')+3, lines[i+3].lastIndexOf('</'))							
+						playerGuilds.push(guild); 						
+				}
+				else if (lines[i].indexOf("Merged Characters") != -1 ){
+					let merge = lines[i+1].split('/')
+					let mergeGrab = merge[4].split(" ")
+					let mergeName = mergeGrab[0].slice(0, -1)
+					let mergeRealm = merge[3]
+					let mergeLocale = merge[2];
+					if (!(mergeName === charName && mergeLocale === locale && mergeRealm === realm))
+						getItemLevel(mergeLocale, mergeRealm, mergeName, addAltx);
 				}
 			}
+			//callback()
+			//handle error??
 	  } 	
 		  
 	});
@@ -690,10 +701,10 @@ function mainPane(){
 	stamps = [];
 
 	var kills = document.getElementById("kills").innerHTML = "First Kill Rankings\n"
-	var charName = document.getElementById('char').value;
+	charName = document.getElementById('char').value;
 	charName = fixName(charName);
-	var realm = toTitleCase(document.getElementById('realm').value).trim();
-	var locale = document.getElementById('locale').value;
+	realm = toTitleCase(document.getElementById('realm').value).trim();
+	locale = document.getElementById('locale').value;
 	var metric = document.getElementById('metric').value;
 	var img = document.createElement("img");
 	var url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
@@ -881,16 +892,22 @@ function mainPane(){
 	// document.getElementById("characterPane").innerHTML="";
 	// document.getElementById("characterPane").appendChild(div);
 
-	var artifactJSON = "https://raider.io/api/v1/characters/profile?region=" + locale + "&realm=" + realm + "&name=" + charName + "&fields=gear"; // <3
-
+	let artifactJSON = "https://raider.io/api/v1/characters/profile?region=" + locale + "&realm=" + realm + "&name=" + charName + "&fields=gear"; // <3
+	let art = document.getElementById("artifact");
+	let artifactText;
+	
 	$.ajax({
 		async: true,
 		type: 'GET',
 		url: artifactJSON,
 		success: function(data) {
-			var art = document.getElementById("artifact");
-			var artifactTraits = data.gear.artifact_traits;
-			var artifactText = "Currently " + artifactTraits + " artifact points are allocated.";
+			let artifactTraits = data.gear.artifact_traits;
+			artifactText = "Currently " + artifactTraits + " artifact points are allocated.";
+			document.getElementById("artifact").innerHTML = "";
+			art.innerHTML = art.innerHTML + "\n" + artifactText;
+		},
+		error: function(){
+			artifactText = "No Artifact on this toon";
 			document.getElementById("artifact").innerHTML = "";
 			art.innerHTML = art.innerHTML + "\n" + artifactText;
 		}
