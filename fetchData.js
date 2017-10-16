@@ -862,7 +862,7 @@ function mainPane(){
 		altsArray.forEach(function(alt){
 			let url = proxy + buildTrackUrl(alt.locale, alt.realm, alt.name);
 			readToon(url, function(){
-				calLCount ++;
+				callCount ++;
 				if (callCount === altLength){
 					rankings()
 					return
