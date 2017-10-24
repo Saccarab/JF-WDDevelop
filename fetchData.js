@@ -1,59 +1,60 @@
 // to do
-// demon hunter check rankings by an alt char since you miss guild info (dh's being freshly created lack all the past guild info)
-// could potentially have same issue on other toons due to created date
-// guildscan implement
 // decide whether if prev bosses should be added back till ragnaros? (as hc first kills)
-// search alts!
-// dont send the character achievement request data billion times for every single boss lookup
+// document send the character achievement request data billion times for every single boss lookup!
 // drop down realm list for eu/us
 // implement kr
-// swap var's with let
+// swap let's with let
 // async.await ??
-// all the patchwerk solutions
+// fix all the patchwerk/bandaid solutions
 
 // [[[[--------------------------------Achievement Codes Guild and Personal -------------------- ------]]]]
 
-// var mistressGUild = 
-// var mistressPersonal =
-var ragnarosPersonal = 5803
-var ragnarosGuild = 5984
-var imperatorPersonal = 8965
-var imperatorGuild = 9420
-var blackhandPersonal = 8973
-var blackhandGuild = 9421
-var archimondePersonal = 10043
-var archimondeGuild = 10176
-var xaviusPersonal = 10827
-var xaviusGuild = 11238
-var helyaPersonal = 11398 
-var helyaGuild = 11404
-var guldanPersonal = 10850
-var guldanGuild = 11239
-var charName;
-var realm;
-var locale;
+const emperorPersonal = 6674
+const emperorGuild = 6675
+const ragnarosPersonal = 5803
+const ragnarosGuild = 5984
+const imperatorPersonal = 8965
+const imperatorGuild = 9420
+const blackhandPersonal = 8973
+const blackhandGuild = 9421
+const archimondePersonal = 10043
+const archimondeGuild = 10176
+const xaviusPersonal = 10827
+const xaviusGuild = 11238
+const helyaPersonal = 11398 
+const helyaGuild = 11404
+const guldanPersonal = 10850
+const guldanGuild = 11239
+
+//global loads
+let charName;
+let realm;
+let locale;
 
 // [[[[--------------------------------Initialize-------------------------------------------------------]]]]
-var divClone;
-var battleNetApiKey = "b7pycu6727tfgrnzawp6sn5bxeerh92z"; // Battle Net Api Key
-var warcraftLogsApiKey = "bff965ef8c377f175a671dacdbdbc822"; // Warcraftlogs Api Key
-var proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates crossorigin.me
+let divClone;
+const battleNetApiKey = "b7pycu6727tfgrnzawp6sn5bxeerh92z"; // Battle Net Api Key
+const warcraftLogsApiKey = "bff965ef8c377f175a671dacdbdbc822"; // Warcraftlogs Api Key
+const proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates crossorigin.me
 
-var clicked;
+let clicked;
 
-var submitAlts = document.getElementById("alts"); //why is this here?
-var altsHtml = "Alts \n\n"
-var playerGuilds = [];
-var guildRequestList = [];
-var altsArray = []
-var fresh = [];
-var callbackCount = 0
+let submitAlts = document.getElementById("alts"); //why is this here?
+let altsHtml = "Alts \n\n"
 
-var callCount = 0;
-var uniqueItems;
-var uniqueRequest;
-var stamps
-// var killStamps = [ convert kill timestamps to JSON when pool gets bigger !! //discarded 
+let playerGuilds = []; //whole list
+let guildRequestList = [];  //guilds to be requested
+let altsArray = [] //alt toons
+let fresh = []; //unique requests only which will hold up the data
+
+let callbackCount = 0
+let callCount = 0;
+
+let uniqueItems; // ?
+let uniqueRequest; // ?
+
+let stamps
+// let killStamps = [ convert kill timestamps to JSON when pool gets bigger !! //discarded 
 // using txt files instead could go back to json
 
 $(document).ready(function(){
@@ -69,13 +70,13 @@ $(document).ready(function(){
 
 function buildArmoryLink(locale, realm, character){
 	locale = localeTransform(locale);
-	var armory = "https://worldofwarcraft.com/en-" + locale + "character/" + realm.replace(/\s+/g, '-') + "/" + character;
+	let armory = "https://worldofwarcraft.com/en-" + locale + "character/" + realm.replace(/\s+/g, '-') + "/" + character;
 	return armory;
 }
 
 function buildTrackUrl(locale, realm, character){ 
 	realm = realm.replace("-", "%20")
-	var track = "https://wowtrack.org/characters" + "/" + locale + "/"	 + realm + "/" + character; 
+	let track = "https://wowtrack.org/characters" + "/" + locale + "/"	 + realm + "/" + character; 
 	return track;
 }
 
@@ -185,7 +186,7 @@ function getClassName(id){
 }
 
 function formatDate(string){ // convert to timestamp from Mar 06 2016 format
-	var date = string.substring(string.lastIndexOf('s"')+3, string.lastIndexOf('</')).replace(",","");
+	let date = string.substring(string.lastIndexOf('s"')+3, string.lastIndexOf('</')).replace(",","");
 	splitted = date.split(" ");
 	formattedJoin = getMonth(splitted[0]) + "/" + splitted[1] + "/" + splitted[2]
 	return (new Date(formattedJoin).getTime());
@@ -233,10 +234,9 @@ function getMonth(short){
 }
 
 function removeDiv(tag){
-	var elem = document.getElementById(tag.id);
+	let elem = document.getElementById(tag.id);
 	elem.parentNode.parentNode.removeChild(tag.parentNode);
 }
-
 
 function getBossOrder(boss){
 	let bossNo;
@@ -263,7 +263,6 @@ function getBossOrder(boss){
 		default :
 			console.log("unknown boss stamp?");
 	}
-
 	return bossNo;
 }
 
@@ -283,7 +282,7 @@ function readToon(url, callback){
 					let n = d.getTime();
 					let guildGrab = lines[i].substring(lines[i].lastIndexOf("guilds")+7, lines[i].lastIndexOf('" '));
 					guildGrab = guildGrab.split("/");
-					var dateLeave = formatDate(lines[i+3]); //convert to stamp
+					let dateLeave = formatDate(lines[i+3]); //convert to stamp
 					if (isNaN(dateLeave)){
 						dateLeave = n
 					}
@@ -331,13 +330,11 @@ function readToon(url, callback){
 	  error: function(){
 	  	console.log("error while reading toon");
 	  	callback();
-	  }	
-		  
+	  }			  
 	});
 }
 
 function rankings(){
-
 	if (locale == "EU")
 		request = "https://eu.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
 	else if (locale == "US")
@@ -370,11 +367,10 @@ function rankings(){
 			});
 
 			fill();
-
 		}
-
 	});
 }
+
 function getBossText(boss) {
 	let bossText;
 
@@ -442,8 +438,7 @@ function blizzspaceToSpace(convertMe){
 }
 
 function getItemLevel(locale, realm, name , func){ // getItemLevel(locale, grabRealm, name, addAltx) is sent from the mainPane
-
-	var request;
+	let request;
 
 	if (locale == "EU")
 		request = "https://eu.api.battle.net/wow/character/" + realm + "/" + name + "?fields=items&locale=en_GB&apikey=" + battleNetApiKey;
@@ -455,9 +450,9 @@ function getItemLevel(locale, realm, name , func){ // getItemLevel(locale, grabR
 		type: 'GET',
 		url: request,
 		success: function(data) {
-			var averageilvl = data.items.averageItemLevelEquipped;
-			var classnm = getClassName(data.class);
-			var obj = { 
+			let averageilvl = data.items.averageItemLevelEquipped;
+			let classnm = getClassName(data.class);
+			let obj = { 
 				characterClass: classnm,
 				characterilvl: averageilvl
 			}
@@ -467,15 +462,14 @@ function getItemLevel(locale, realm, name , func){ // getItemLevel(locale, grabR
 }
 
 function addAltx(locale, realm, name, obj){ //, divid
-
 	name = upperCaseFirstL(name);
 	realm = toTitleCase(realm.toString());
 
-	var alts = document.getElementById("alts");
-	var link = document.createElement("a");
-	var text = document.createElement('td1');
-	var div = document.createElement("div"); 
-	var button = document.createElement("img");
+	let alts = document.getElementById("alts");
+	let link = document.createElement("a");
+	let text = document.createElement('td1');
+	let div = document.createElement("div"); 
+	let button = document.createElement("img");
 
 	button.style.border = "1.7px solid #000000"
 	button.src = "images/remove2.png";
@@ -505,11 +499,11 @@ function addAltx(locale, realm, name, obj){ //, divid
 
 
 function temp(){
-	var altDiv = document.getElementById("alts");
-	var altName = document.getElementById('altName').value;
+	let altDiv = document.getElementById("alts");
+	let altName = document.getElementById('altName').value;
 	altName = upperCaseFirstL(altName);
-	var locale = document.getElementById('locale').value;
-	var altRealm = toTitleCase(document.getElementById('altRealm').value);
+	let locale = document.getElementById('locale').value;
+	let altRealm = toTitleCase(document.getElementById('altRealm').value);
 	getItemLevel( locale, altRealm, altName, addAltx); //(altDiv)
 }
 
@@ -582,7 +576,6 @@ function guildEquals(obj1, obj2){
 }
 
 function guildCode(boss){
-	
 	let code;
 
 	switch(boss){
@@ -615,7 +608,6 @@ function guildCode(boss){
 
 
 function getStamp(achievCode, obj){
-	
 	let stamp;
 	let index;
 
@@ -696,10 +688,9 @@ function loopThrough(){
 	// 10.14.2017 usin async data load then loop from now on to do less requests overall
 
 function guildRank(fdata, boss, personalAchiev){
-	
 	let index = fdata.achievements.achievementsCompleted.indexOf(personalAchiev);
 	if (index != -1){   // make this a function to avoid bracket hell or use if == -1 return else do ur stuff (which could look way more elegant)
-		var stamp = fdata.achievements.achievementsCompletedTimestamp[index]; //hoist the colors
+		let stamp = fdata.achievements.achievementsCompletedTimestamp[index]; //hoist the colors
 		playerGuilds.forEach(function (guildIter, i){
 			if (stamp < guildIter.dateLeave && stamp > guildIter.dateJoin){
 				guildIter.boss = getBossOrder(boss);
@@ -745,14 +736,14 @@ function mainPane(){
 	uniqueRequest = [];
 	stamps = [];
 
-	var kills = document.getElementById("kills").innerHTML = "First Kill Rankings\n"
+	let kills = document.getElementById("kills").innerHTML = "First Kill Rankings\n"
 	charName = document.getElementById('char').value;
 	charName = fixName(charName);
 	realm = toTitleCase(document.getElementById('realm').value).trim();
 	locale = document.getElementById('locale').value;
-	var metric = document.getElementById('metric').value;
-	var img = document.createElement("img");
-	var url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
+	let metric = document.getElementById('metric').value;
+	let img = document.createElement("img");
+	let url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
 	callCount = 0;
 	callbackCount = 0;
 	$.ajax({
@@ -761,26 +752,26 @@ function mainPane(){
 	  success: function(data){
 
 	  	clicked = true;
-	  	var loc;
-		var name;
-		var grabRealm;
-		var wClass;
-		var grab;
-		var ilvl;
-		var lines = data.split("\n");
-		var lineLength = lines.length;
-		var merge = 0; // dont really use this anymore but could be needed when figuring out how to excludr merged character url request on alt character guild pushes
-		var k = 0;
+	  	let loc;
+		let name;
+		let grabRealm;
+		let wClass;
+		let grab;
+		let ilvl;
+		let lines = data.split("\n");
+		let lineLength = lines.length;
+		let merge = 0; // dont really use this anymore but could be needed when figuring out how to excludr merged character url request on alt character guild pushes
+		let k = 0;
 		document.getElementById("alts").innerHTML = "ALTS"; //Refresh on new submit
 		
 		for (i = 0; i < lineLength; i++){
 			if (lines[i].indexOf("<a href=\"/characters") != -1 ) { // ALTS
 				merge ++; 
-				var grab = lines[i].split("/");
+				let grab = lines[i].split("/");
 
 				ilvl=lines[i+1].substring(lines[i+1].lastIndexOf("<td>") + 4,lines[i+1].lastIndexOf("</td>"));
 
-				var grabLength = grab.length;
+				let grabLength = grab.length;
 
 				for (j = 0; j < grabLength; j++){
 
@@ -816,18 +807,18 @@ function mainPane(){
 			}
 			else if (lines[i].indexOf("guilds") != -1 ){ //guilds
 				k++;
-				var d = new Date();
-				var n = d.getTime();
-				var guildGrab = lines[i].substring(lines[i].lastIndexOf("guilds")+7, lines[i].lastIndexOf('" '));
+				let d = new Date();
+				let n = d.getTime();
+				let guildGrab = lines[i].substring(lines[i].lastIndexOf("guilds")+7, lines[i].lastIndexOf('" '));
 				guildGrab = guildGrab.split("/");
-				var dateLeave = formatDate(lines[i+3]); //convert to stamp
+				let dateLeave = formatDate(lines[i+3]); //convert to stamp
 				if (isNaN(dateLeave)){
 					dateLeave = n
 					}
 				
-				var tempGrab = guildGrab[2].split("%20");
-				var tempSize = tempGrab.length;
-				var gName = ""
+				let tempGrab = guildGrab[2].split("%20");
+				let tempSize = tempGrab.length;
+				let gName = ""
 
 				if (tempSize > 1){
 					
@@ -877,36 +868,6 @@ function mainPane(){
 	  	alert("Invalid Character");
 	  }
 	});
-	// ---------------------------------------------------------------------First Kil Block ----------------------------------------------------
-
-	// ---------------------------------------------------------------------First Kil Block ----------------------------------------------------
-
-	// ---------------------------------------------------------------------First Kil Block ----------------------------------------------------
-
-	// ---------------------------------------------------------------------First Kil Block ----------------------------------------------------
-
-	// ---------------------------------------------------------------------First Kil Block ----------------------------------------------------
-
-	// var base = "https://wowtrack.org/characters/"; //WowTrack character url body
-
-	// img.onclick = function() {
-	// 	var image = (buildTrackUrl(locale, realm, charName));
-	// 	window.open(image);
-
-	// };
-	// img.setAttribute('target', '_blank');
-	// var response = "?response=signature&fields=progression,averageItemLevel,mythicDungeonLevel";
-	// var realmNonSpace = realm.replace(" ", "%20");
-	// img.src = base + locale + "/" + realmNonSpace + "/" + charName + response;
-
-	// img.href = "https://wowtrack.org/characters/" + locale + "/" + realmNonSpace + "/" + charName;
-	
-	// img.alt = "Invalid Character";
-	// var div = document.createElement("div");
-	// div.appendChild(img);
-
-	// document.getElementById("characterPane").innerHTML="";
-	// document.getElementById("characterPane").appendChild(div);
 
 	let artifactJSON = "https://raider.io/api/v1/characters/profile?region=" + locale + "&realm=" + realm + "&name=" + charName + "&fields=gear"; // <3
 	let art = document.getElementById("artifact");
@@ -929,33 +890,32 @@ function mainPane(){
 		}
 	});
 
-	var wlogsBody = "https://www.warcraftlogs.com/character/" + locale + "/" + realm.replace(/\s+/g, '-') + "/" + charName 
+	let wlogsBody = "https://www.warcraftlogs.com/character/" + locale + "/" + realm.replace(/\s+/g, '-') + "/" + charName 
 	document.getElementById("wlogs").href = wlogsBody;
 
-	var wowProgressText = "https://www.wowprogress.com/character/" + locale + "/" + realm.replace(/\s+/g, '-') + "/" + charName;
+	let wowProgressText = "https://www.wowprogress.com/character/" + locale + "/" + realm.replace(/\s+/g, '-') + "/" + charName;
 
-	var armoryText = buildArmoryLink(locale, realm, charName); 
+	let armoryText = buildArmoryLink(locale, realm, charName); 
 	
 	document.getElementById("blizz").href = armoryText;
 	document.getElementById("progress").href = wowProgressText;
-	var blizzString = document.getElementById("blizz").children[0].text;
+	let blizzString = document.getElementById("blizz").children[0].text;
 	JFCustomWidget.subscribe("submit", function(){
 
 		document.body.style.backgroundColor = "black";
-		var blizzString = document.getElementById("blizz").outerHTML;		
-		// var pane = document.getElementById("characterPane").outerHTML
-		var progressString = document.getElementById("progress").outerHTML;
-		var wlogsString = document.getElementById("wlogs").outerHTML;
-		var killsString = document.getElementById("kills").outerHTML;
+		let blizzString = document.getElementById("blizz").outerHTML;		
+		// let pane = document.getElementById("characterPane").outerHTML
+		let progressString = document.getElementById("progress").outerHTML;
+		let wlogsString = document.getElementById("wlogs").outerHTML;
+		let killsString = document.getElementById("kills").outerHTML;
 			
-		var result = {}
+		let result = {}
 		result.valid = false;
 		 
 		if(clicked) /// this?  charName != "" && realm != "" && 
 			result.valid = true;
 
 		result.value = blizzString + progressString + wlogsString + killsString + altsHtml ;
-		result.valid = false;
 		JFCustomWidget.sendSubmit(result);
 
 	});
