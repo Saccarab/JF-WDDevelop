@@ -608,8 +608,8 @@ function fixName(name){
 function playerStamps(obj){
 
 	stamps = {
-		ragnarosStamp : getStamp(ragnarosStamp, obj),
-		deathwingStamp : getStamp(deathwingStamp, obj),
+		ragnarosStamp : getStamp(ragnarosPersonal, obj),
+		deathwingStamp : getStamp(deathwingPersonal, obj),
 		emperorStamp : getStamp(emperorPersonal, obj),
 		shekzeerStamp : getStamp(shekzeerPersonal, obj),
 		shaoffearStamp : getStamp(shaoffearPersonal, obj),
