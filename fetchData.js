@@ -7,22 +7,43 @@
 // async.await ??
 // fix all the patchwerk/bandaid solutions
 
-// [[[[--------------------------------Achievement Codes Guild and Personal -------------------- ------]]]]
+// [[[[--------------------------------Achievement Codes for Bosses Guild and Personal -------------------- ------]]]]
 
-const emperorPersonal = 6674
-const emperorGuild = 6675
+// ---- Ragnaros
 const ragnarosPersonal = 5803
 const ragnarosGuild = 5984
+// ---- ShaofFear
+const shaoffearPersonal = 6734
+const shaoffearGuild = 6676
+// ---- Shekzeer
+const shekzeerPersonal = 6730
+const shekzeerGuild = 6677
+// ---- Emperor
+const emperorPersonal = 6674
+const emperorGuild = 6675
+// ---- Raden	
+const radenPersonal = 8068
+const radenGuild = 8258
+// ---- Garrosh
+const garroshPersonal = 8679 //alliance
+const garroshPersonal = 8680 //horde
+const garroshGuild = 8511
+// ---- Imperator
 const imperatorPersonal = 8965
 const imperatorGuild = 9420
+// ---- Blackhand
 const blackhandPersonal = 8973
 const blackhandGuild = 9421
+// ---- Archimonde
 const archimondePersonal = 10043
 const archimondeGuild = 10176
+// ---- Xavius
 const xaviusPersonal = 10827
 const xaviusGuild = 11238
+// ---- Helya
 const helyaPersonal = 11398 
 const helyaGuild = 11404
+// ---- Guldan
 const guldanPersonal = 10850
 const guldanGuild = 11239
 
@@ -31,12 +52,14 @@ let charName;
 let realm;
 let locale;
 
-// [[[[--------------------------------Initialize-------------------------------------------------------]]]]
-let divClone;
+// [[[[--------------------------------Constants-------------------------------------------------------]]]]
 const battleNetApiKey = "b7pycu6727tfgrnzawp6sn5bxeerh92z"; // Battle Net Api Key
 const warcraftLogsApiKey = "bff965ef8c377f175a671dacdbdbc822"; // Warcraftlogs Api Key
 const proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates crossorigin.me
 
+
+// [[[[--------------------------------Initialize-------------------------------------------------------]]]]
+let divClone;
 let clicked;
 
 let submitAlts = document.getElementById("alts"); //why is this here?
@@ -49,23 +72,21 @@ let fresh = []; //unique requests only which will hold up the data
 
 let callbackCount = 0
 let callCount = 0;
-
 let uniqueItems; // ?
 let uniqueRequest; // ?
 
-let stamps
-// let killStamps = [ convert kill timestamps to JSON when pool gets bigger !! //discarded 
-// using txt files instead could go back to json
+let stamps;
 
 $(document).ready(function(){
 	submitAlts.innerHTML = "";
 	clicked = false;
 	divClone = $("#divid1").html();
 	JFCustomWidget.subscribe("ready", function(){
+		// implement jotform options
 		// fontSize = parseInt(JFCustomWidget.getWidgetSetting('fontSize'));
 		// fontFamily = JFCustomWidget.getWidgetSetting('fontFamily');
 		// fontColor = JFCustomWidget.getWidgetSetting('fontColor');
-		});	
+	});	
 });
 
 function buildArmoryLink(locale, realm, character){
@@ -841,9 +862,6 @@ function mainPane(){
 
 				if (k != 1) //missread on first catch
 					playerGuilds.push(guild); 
-				//Apr 29, 2016
-				// guildLeft = lines [i+3].substring(lines[i+3].lastIndexOf('s"')+3, lines[i+3].lastIndexOf('</'))
-				
 			}
 			else{}//cnd
 		}
@@ -904,7 +922,6 @@ function mainPane(){
 
 		document.body.style.backgroundColor = "black";
 		let blizzString = document.getElementById("blizz").outerHTML;		
-		// let pane = document.getElementById("characterPane").outerHTML
 		let progressString = document.getElementById("progress").outerHTML;
 		let wlogsString = document.getElementById("wlogs").outerHTML;
 		let killsString = document.getElementById("kills").outerHTML;
