@@ -1,32 +1,35 @@
 // to do
-// decide whether if prev bosses should be added back till ragnaros? (as hc first kills)
 // document send the character achievement request data billion times for every single boss lookup!
 // drop down realm list for eu/us
 // implement kr
-// swap let's with let
+//!better implementation of const achiev numbers // create an array of objects etc..
 // async.await ??
 // fix all the patchwerk/bandaid solutions
 
 // [[[[--------------------------------Achievement Codes for Bosses Guild and Personal -------------------- ------]]]]
 
-// ---- Ragnaros
-const ragnarosPersonal = 5803
+// ---- Ragnaros // 13
+const ragnarosPersonal = 5803 
 const ragnarosGuild = 5984
-// ---- ShaofFear
-const shaoffearPersonal = 6734
-const shaoffearGuild = 6676
-// ---- Shekzeer
-const shekzeerPersonal = 6730
-const shekzeerGuild = 6677
-// ---- Emperor
-const emperorPersonal = 6674
+// ---- Deathwing // 12
+const deathwingPersonal = 6116
+const deathwingGuild = 6125
+// ---- Emperor // 11
+const emperorPersonal = 6724 
 const emperorGuild = 6675
-// ---- Raden	
-const radenPersonal = 8068
+// ---- Shekzeer // 10
+const shekzeerPersonal = 6730 
+const shekzeerGuild = 6677
+// ---- ShaofFear // 9
+const shaoffearPersonal = 6734 
+const shaoffearGuild = 6676
+// ---- Raden // 8
+const radenPersonal = 8068 
 const radenGuild = 8258
 // ---- Garrosh
-const garroshPersonal = 8679 //alliance
-const garroshPersonal = 8680 //horde
+// const garroshPersonal = 8679 //alliance 
+// const garroshPersonal = 8680 //horde
+const garroshPersonal = 8482 // 7
 const garroshGuild = 8511
 // ---- Imperator
 const imperatorPersonal = 8965
@@ -43,7 +46,7 @@ const xaviusGuild = 11238
 // ---- Helya
 const helyaPersonal = 11398 
 const helyaGuild = 11404
-// ---- Guldan
+// ---- Guldan ---- 6
 const guldanPersonal = 10850
 const guldanGuild = 11239
 
@@ -263,6 +266,27 @@ function getBossOrder(boss){
 	let bossNo;
 
 	switch(boss){
+		case "ragnaros":
+			bossNo = 13
+			break;
+		case "deathwing":
+			bossNo = 12
+			break;
+		case "emperor":
+			bossNo = 11
+			break;
+		case "shekzeer":
+			bossNo = 10
+			break;
+		case "shaoffear":
+			bossNo = 9
+			break;
+		case "raden":
+			bossNo = 8
+			break;
+		case "garrosh":
+			bossNo = 7
+			break;
 		case "guldan":
 			bossNo = 6
 			break;
@@ -376,6 +400,13 @@ function rankings(){
 
 			playerStamps(obj)
 
+			guildRank(data, "ragnaros", ragnarosPersonal)
+			guildRank(data, "deathwing", deathwingPersonal)
+			guildRank(data, "emperor", emperorPersonal)
+			guildRank(data, "shekzeer", shekzeerPersonal)
+			guildRank(data, "shaoffear", shaoffearPersonal)
+			guildRank(data, "raden", radenPersonal)
+			guildRank(data, "garrosh", garroshPersonal)
 			guildRank(data, "guldan", guldanPersonal)
 			guildRank(data, "helya", helyaPersonal)
 			guildRank(data, "xavius", xaviusPersonal)
@@ -396,23 +427,44 @@ function getBossText(boss) {
 	let bossText;
 
 	switch(boss){
+		case "ragnaros":
+			bossText = "Ragnaros Heroic rank"
+			break;
+		case "deathwing":
+			bossText = " Deathwing Heroic rank"
+			break;
+		case "emperor":
+			bossText = " Emperor Heroic rank"
+			break;
+		case "shekzeer":
+			bossText = " Shekzeer Heroic rank"
+			break;
+		case "shaoffear":
+			bossText = " Sha of Fear rank "
+			break;
+		case "raden":
+			bossText = " Raden Heroic rank"
+			break;
+		case "garrosh":
+			bossText = "  Garrosh Heroic rank"
+			break;
 		case "guldan": 
-			bossText =  " Nighthold Mythic world rank "
+			bossText =  " Gul'dan Mythic world rank "
 			break;
 		case "helya":
-			bossText = "    Trial of Valor Mythic world rank "
+			bossText = " Helya Mythic world rank "
 			break;
 		case "xavius":
-			bossText =  "   Emerald Nightmare Mythic world rank ";
+			bossText =  "   Xavius Mythic world rank ";
 			break;
 		case "archimonde":
-			bossText = "   Hellfire Citadel Mythic world rank ";
+			bossText = "   Archimonde Mythic world rank ";
 			break;	
 		case "blackhand":
-			bossText = "   Blackrock Foundry Mythic world rank ";
+			bossText = "   Blackhand Mythic world rank ";
 			break;
 		case "imperator":
-			bossText = "   Highmaul Mythic world rank ";
+			bossText = "   Imperator Mar'gok Mythic world rank ";
 			break;
 		default :
 			console.log("unknown boss text?");
@@ -425,6 +477,27 @@ function getBossName(boss){
 	let bossName;
 
 	switch(boss){
+		case 13:
+			bossName = "ragnaros"
+			break;
+		case 12:
+			bossName = "deathwing"
+			break;
+		case 11:
+			bossName = "emperor"
+			break;
+		case 10:
+			bossName = "shekzeer"
+			break;
+		case 9:
+			bossName = "shaoffear"
+			break;
+		case 8:
+			bossName = "raden"
+			break;
+		case 7:
+			bossName = "garrosh"
+			break;
 		case 6:
 			bossName = "guldan"
 			break;
@@ -535,6 +608,13 @@ function fixName(name){
 function playerStamps(obj){
 
 	stamps = {
+		ragnarosStamp : getStamp(ragnarosStamp, obj),
+		deathwingStamp : getStamp(deathwingStamp, obj),
+		emperorStamp : getStamp(emperorPersonal, obj),
+		shekzeerStamp : getStamp(shekzeerPersonal, obj),
+		shaoffearStamp : getStamp(shaoffearPersonal, obj),
+		radenStamp : getStamp(radenPersonal, obj),
+		garroshStamp : getStamp(garroshPersonal, obj),
 		guldanStamp : getStamp(guldanPersonal, obj),
 		helyaStamp : getStamp(helyaPersonal, obj),
 		xaviusStamp : getStamp(xaviusPersonal, obj),
@@ -600,6 +680,27 @@ function guildCode(boss){
 	let code;
 
 	switch(boss){
+		case 13:
+			code = ragnarosGuild
+			break;
+		case 12:
+			code = deathwingGuild
+			break;
+		case 11:
+			code = emperorGuild
+			break;
+		case 10:
+			code = shekzeerGuild
+			break;
+		case 9:
+			code = shaoffearGuild
+			break;	
+		case 8:
+			code = radenGuild
+			break;
+		case 7:
+			code = garroshGuild;
+			break;
 		case 6:
 			code = guldanGuild
 			break;
