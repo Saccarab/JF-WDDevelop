@@ -82,7 +82,6 @@ let uniqueRequest; // ?
 
 let stamps;
 let lost = false;
-let fail = 0;
 
 $(document).ready(function(){
 	submitAlts.innerHTML = "";
@@ -1024,17 +1023,13 @@ function mainPane(){
 		});
 
 	  },
-	  error: function (){ // Reset on fail
-	  	if (fail == 0){
-	  		proxy = 'https://crossorigin.me/'
-	  		fail = fail + 1;
-	  		mainPane();
-	  	}
-	  	else {
-		  	clicked = false;
-		  	$("#divid1").html(divClone); 
-		  	alert("Invalid Character");
-  		}
+	  error: function (){ // Reset on fail // Proxy fallback 	
+  		clicked = false;
+	  	$("#divid1").html(divClone); 
+	  	alert("Invalid Character");// if (fail == 0){
+	  	// 	proxy = 'https://crossorigin.me/'
+	  	// 	fail = fail + 1;
+	  	// 	mainPane();
 	  }
 	});
 
