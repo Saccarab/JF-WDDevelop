@@ -6,6 +6,8 @@
 // async.await ??
 // fix all the patchwerk/bandaid solutions
 
+// guild migrate causes multiple bugs
+// character data is mostly non existant prior to july 2012 //ragnaros deathwing ends up not working
 // [[[[--------------------------------Achievement Codes for Bosses Guild and Personal -------------------- ------]]]]
 
 // ---- Ragnaros // 13
@@ -79,6 +81,7 @@ let uniqueItems; // ?
 let uniqueRequest; // ?
 
 let stamps;
+let lost = false;
 
 $(document).ready(function(){
 	submitAlts.innerHTML = "";
@@ -735,6 +738,7 @@ function guildMigrate(){
 					if (fresh[i].guildData.completedArray.length > guild.guildData.completedArray.length){
 						guildRequestList.forEach(function(replace){
 							if (replace.guildName === fresh[i].guildName && replace.guildRealm === guild.guildRealm){
+								replace.oldRealm = replace.guildRealm;
 								replace.guildName = fresh[i].guildName;
 								replace.guildRealm = fresh[i].guildRealm;
 							}			
@@ -743,6 +747,7 @@ function guildMigrate(){
 					else{
 						guildRequestList.forEach(function(replace){
 							if (replace.guildName === guild.guildName && replace.guildRealm === fresh[i].guildRealm){
+								replace.oldRealm = replace.guildRealm;
 								replace.guildName = guild.guildName;
 								replace.guildRealm = guild.guildRealm;
 							}
@@ -765,7 +770,7 @@ function getStamp(achievCode, obj){
 			stamp = obj.timestamps[index];
 	}
 	else
-		alert('Data might be lost due to disbanded guild')
+		lost = true
 
 	return stamp // -1 if not found??
 }	
@@ -800,14 +805,18 @@ function loopThrough(){
 									let lines = sData.split("\n");
 									lineCount = lines.length;
 									let rank;
+									let guildMigrateBlocker = guild.guildRealm;
+
+									if (guild.oldRealm !== undefined)
+										guildMigrateBlocker = guild.oldRealm;
 
 									for (i=0 ; i < lineCount ; i++){
-										if (lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){ //temp fix??
+										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName){ //temp fix??
 											rank = i + 1
 											img.src = "images/" + boss + ".jpg";
 											img.alt = boss
 											div.appendChild(img) //   
-											text.innerHTML = getBossText(boss) + rank + " in guild " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guild.guildRealm);
+											text.innerHTML = getBossText(boss) + rank + " in guild " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
 											div.appendChild(text)
 											let kills = document.getElementById("kills");	
 											kills.appendChild(div)
@@ -827,6 +836,10 @@ function loopThrough(){
 		}
 		else return;
 	});
+	if (lost){ //unreachable
+		alert('Data might be lost due to disbanded guild.')
+		lost = false;
+	}
 }
 
 	// Check if the player killed the given world of warcraft boss by blizz achievement api
