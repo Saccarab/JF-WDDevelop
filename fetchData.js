@@ -428,25 +428,25 @@ function getBossText(boss) {
 
 	switch(boss){
 		case "ragnaros":
-			bossText = "Ragnaros Heroic rank"
+			bossText = "Ragnaros Heroic rank "
 			break;
 		case "deathwing":
-			bossText = " Deathwing Heroic rank"
+			bossText = " Deathwing Heroic rank "
 			break;
 		case "emperor":
-			bossText = " Emperor Heroic rank"
+			bossText = " Emperor Heroic rank "
 			break;
 		case "shekzeer":
-			bossText = " Shekzeer Heroic rank"
+			bossText = " Shekzeer Heroic rank "
 			break;
 		case "shaoffear":
 			bossText = " Sha of Fear rank "
 			break;
 		case "raden":
-			bossText = " Raden Heroic rank"
+			bossText = " Raden Heroic rank "
 			break;
 		case "garrosh":
-			bossText = "  Garrosh Heroic rank"
+			bossText = "  Garrosh Heroic rank "
 			break;
 		case "guldan": 
 			bossText =  " Gul'dan Mythic world rank "
@@ -649,7 +649,7 @@ function asyncGet(guildElement, index, callback){
 		},
 
 		error: function() {
-            console.log('error for ' + guildElement.name);
+            console.log('error for ' + guildElement.guildName); // error for undefined?
             callback();
         }
 	});
@@ -727,24 +727,53 @@ function guildCode(boss){
 
 }
 
-
+function guildMigrate(){
+	fresh.forEach(function(guild, idx){ //iterate self
+		for (let i = 0; i < fresh.length; i++){
+			if (i !== idx){ //ignore self
+				if (guild.guildName === fresh[i].guildName && guild.guildRealm !== fresh[i].guildRealm){
+					if (fresh[i].length > guild.length){
+						guildRequestList.forEach(function(replace){
+							if (replace.guildName === fresh[i].guildName && replace.guildRealm === fresh[i].guildRealm){
+								replace.guildName = fresh[i].guildName;
+								replace.guildRealm = fresh[i].guildRealm;
+							}			
+						});
+					}
+					else{
+						guildRequestList.forEach(function(replace){
+							if (replace.guildName === guild.guildName && replace.guildRealm === guild.guildRealm){
+								replace.guildName = guild.guildName;
+								replace.guildRealm = guild.guildRealm;
+							}
+						});
+					}	
+				}
+			}
+		}
+	});
+}
 
 function getStamp(achievCode, obj){
-	let stamp;
+	let stamp = -1
 	let index;
 
-	index = obj.completedArray.indexOf(achievCode);
+	if (obj !== undefined){
+		index = obj.completedArray.indexOf(achievCode);
 
-	if (index == -1)
-		stamp = -1;
+		if (index !== -1)
+			stamp = obj.timestamps[index];
+	}
 	else
-		stamp = obj.timestamps[index];
+		alert('Data might be lost due to disbanded guild')
 
 	return stamp // -1 if not found??
 }	
 
 function loopThrough(){
-	let list = [1,2,3,4,5,6];
+
+	guildMigrate();
+	let list = [1,2,3,4,5,6,7,8,9,10,11,12,13];
 	guildRequestList.forEach(function(guild){
 		let check = guild.boss;
 		if (list.includes(check)){
@@ -753,7 +782,7 @@ function loopThrough(){
 					if(guildEquals(guild, grab)){
 						let boss = getBossName(guild.boss)
 						let guildAch = eval(boss+'Guild'); //patchwerk
-						let guildStamp = getStamp(guildAch,grab.guildData)
+						let guildStamp = getStamp(guildAch, grab.guildData) // if -1
 
 						let stamp = eval('stamps.'+boss+'Stamp')
 						if (Math.abs(stamp - guildStamp) <= 150000){ // my first Kill is within 5 minutes of guilds kill 
