@@ -734,7 +734,7 @@ function guildMigrate(){
 				if (guild.guildName === fresh[i].guildName && guild.guildRealm !== fresh[i].guildRealm){
 					if (fresh[i].guildData.completedArray.length > guild.guildData.completedArray.length){
 						guildRequestList.forEach(function(replace){
-							if (replace.guildName === fresh[i].guildName && replace.guildRealm === fresh[i].guildRealm){
+							if (replace.guildName === fresh[i].guildName && replace.guildRealm === guild.guildRealm){
 								replace.guildName = fresh[i].guildName;
 								replace.guildRealm = fresh[i].guildRealm;
 							}			
@@ -742,7 +742,7 @@ function guildMigrate(){
 					}
 					else{
 						guildRequestList.forEach(function(replace){
-							if (replace.guildName === guild.guildName && replace.guildRealm === guild.guildRealm){
+							if (replace.guildName === guild.guildName && replace.guildRealm === fresh[i].guildRealm){
 								replace.guildName = guild.guildName;
 								replace.guildRealm = guild.guildRealm;
 							}
