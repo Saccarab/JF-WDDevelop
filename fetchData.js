@@ -732,7 +732,7 @@ function guildMigrate(){
 		for (let i = 0; i < fresh.length; i++){
 			if (i !== idx){ //ignore self
 				if (guild.guildName === fresh[i].guildName && guild.guildRealm !== fresh[i].guildRealm){
-					if (fresh[i].guildData.length > guild.guildData.length){
+					if (fresh[i].guildData.completedArray.length > guild.guildData.completedArray.length){
 						guildRequestList.forEach(function(replace){
 							if (replace.guildName === fresh[i].guildName && replace.guildRealm === fresh[i].guildRealm){
 								replace.guildName = fresh[i].guildName;
