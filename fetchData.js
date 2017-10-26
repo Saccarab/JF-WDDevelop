@@ -82,6 +82,7 @@ let uniqueRequest; // ?
 
 let stamps;
 let lost = false;
+let fail = 0;
 
 $(document).ready(function(){
 	submitAlts.innerHTML = "";
@@ -1029,10 +1030,11 @@ function mainPane(){
 	  		fail = fail + 1;
 	  		mainPane();
 	  	}
-	  	fail == 1)
-	  	clicked = false;
-	  	$("#divid1").html(divClone); 
-	  	alert("Invalid Character");
+	  	else {
+		  	clicked = false;
+		  	$("#divid1").html(divClone); 
+		  	alert("Invalid Character");
+  		}
 	  }
 	});
 
