@@ -440,7 +440,6 @@ function guildRank(fdata, boss, personalAchiev){
 function mainPane(){
 
 // [[[[--------------------------------Reset--Variables------------------------------------------]]]]
-	lost = true;
 	fresh = []
 	playerGuilds = [];
 	altsArray = [];
