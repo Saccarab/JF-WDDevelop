@@ -60,7 +60,7 @@ let locale;
 // [[[[--------------------------------Constants-------------------------------------------------------]]]]
 const battleNetApiKey = "b7pycu6727tfgrnzawp6sn5bxeerh92z"; // Battle Net Api Key
 const warcraftLogsApiKey = "bff965ef8c377f175a671dacdbdbc822"; // Warcraftlogs Api Key
-const proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates crossorigin.me
+let proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates crossorigin.me
 
 
 // [[[[--------------------------------Initialize-------------------------------------------------------]]]]
@@ -1024,6 +1024,12 @@ function mainPane(){
 
 	  },
 	  error: function (){ // Reset on fail
+	  	if (fail == 0){
+	  		proxy = 'https://crossorigin.me/'
+	  		fail = fail + 1;
+	  		mainPane();
+	  	}
+	  	fail == 1)
 	  	clicked = false;
 	  	$("#divid1").html(divClone); 
 	  	alert("Invalid Character");
