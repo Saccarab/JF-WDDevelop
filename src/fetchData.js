@@ -269,7 +269,6 @@ function asyncGet(guildElement, index, callback){
 
 			fresh[index].guildData = obj;
 			callback();
-
 		},
 
 		error: function() {
@@ -346,7 +345,7 @@ function loopThrough(){
 								guild : guild,
 								url: "rankings/" + boss + ".txt",
 								success: function(sData){
-									let div = document.createElement("div");
+									let div = document.getElementById(boss);
 									let img = document.createElement("img");	
 									let text = document.createElement('td1');
 									let lines = sData.split("\n");
@@ -364,10 +363,7 @@ function loopThrough(){
 											img.alt = boss
 											div.appendChild(img) //   
 											text.innerHTML = getBossText(boss) + rank + " in guild " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
-											div.appendChild(text)
-											let kills = document.getElementById("kills");	
-											kills.appendChild(div)
-
+											div.appendChild(text) //
 										}
 									}
 								},
