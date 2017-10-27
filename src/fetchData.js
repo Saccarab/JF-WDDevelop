@@ -361,9 +361,9 @@ function loopThrough(){
 											rank = i + 1
 											img.src = "images/" + boss + ".jpg";
 											img.alt = boss
-											div.appendChild(img) //   
+											div.appendChild(img)  
 											text.innerHTML = getBossText(boss) + rank + " in guild " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
-											div.appendChild(text) //
+											div.appendChild(text)
 										}
 									}
 								},
