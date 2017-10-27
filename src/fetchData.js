@@ -351,7 +351,8 @@ function loopThrough(){
 									let lines = sData.split("\n");
 									lineCount = lines.length;
 									let rank;
-									let guildMigrateBlocker = guild.guildRealm;
+									let guildMigrateBlocker = guild.guildRealm; 
+									//rankings list has issues on matching guildname/realm if we lose the migrated guild value
 
 									if (guild.oldRealm !== undefined)
 										guildMigrateBlocker = guild.oldRealm;
