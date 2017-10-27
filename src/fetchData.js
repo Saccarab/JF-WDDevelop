@@ -24,6 +24,7 @@ let realm;
 let locale;
 
 let altsHtml = "Alts \n\n"
+let killsHtml = document.getElementById("kills").innerHTML
 
 let playerGuilds = []; //whole list
 let guildRequestList = [];  //guilds to be requested
@@ -449,7 +450,7 @@ function mainPane(){
 
 // // [[[[--------------------------------Html-Grab-----------------------------------------------]]]]
 
-	let kills = document.getElementById("kills").innerHTML = "First Kill Rankings\n"
+	document.getElementById("kills").innerHTML = killsHtml
 	charName = fixName(document.getElementById('char').value);
 	realm = toTitleCase(document.getElementById('realm').value).trim();
 	locale = document.getElementById('locale').value;
