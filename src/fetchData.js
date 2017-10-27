@@ -1,10 +1,12 @@
 // to do
-// document send the character achievement request data billion times for every single boss lookup!
+// dont send the character achievement request data billion times for every single boss lookup!
 // drop down realm list for eu/us
 // implement kr
+// nicer submission format on jotform side
 // async.await ??
 // fix all the patchwerk/bandaid solutions
-
+// 
+// issues
 // guild migrate causes multiple bugs
 // character data is mostly non existant prior to july 2012 //ragnaros deathwing wont work most of the time
 

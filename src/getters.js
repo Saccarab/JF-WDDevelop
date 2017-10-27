@@ -289,7 +289,7 @@ function getBossText(boss) {
 			bossText = " Shekzeer Heroic rank "
 			break;
 		case "shaoffear":
-			bossText = " Sha of Fear rank "
+			bossText = " Sha of Fear Heroic rank "
 			break;
 		case "raden":
 			bossText = " Raden Heroic rank "
