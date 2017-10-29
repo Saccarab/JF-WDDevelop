@@ -363,7 +363,8 @@ function loopThrough(){
 									for (i=0 ; i < lineCount ; i++){
 										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName){ //temp fix??
 											rank = i + 1
-											img.src = "images/" + boss + ".jpg";
+											img.src = "https://raw.githubusercontent.com/Saccarab/WoW-Resume/master/images/" + boss + ".jpg";
+											//had to use absolute path for the jotform side of image handling
 											img.alt = boss
 											div.appendChild(img)  
 											text.innerHTML = getBossText(boss) + rank + " in guild " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
@@ -630,6 +631,7 @@ function mainPane(){
 		if(clicked) /// this?  charName != "" && realm != "" && 
 			result.valid = true;
 
+		//metric
 		result.value = blizzString + progressString + wlogsString + killsString + altsHtml ;
 		JFCustomWidget.sendSubmit(result);
 
