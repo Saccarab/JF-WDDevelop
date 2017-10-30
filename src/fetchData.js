@@ -20,12 +20,16 @@ const proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates ??
 // [[[[--------------------------------Initialize-------------------------------------------------------]]]]
 let divClone;
 let clicked;
+
 //global loads
 let charName;
 let realm;
 let locale;
+let sizeObject = {
+	pageHeight : 0
+}
 
-let altsHtml = "Alts \n\n"
+let altsHtml = "Alt Characters" //use actual alts div instead building this aw?
 let killsHtml = document.getElementById("kills").innerHTML
 
 let playerGuilds = []; //whole list
@@ -33,6 +37,7 @@ let guildRequestList = [];  //guilds to be requested
 let altsArray = [] //alt toons
 let fresh = []; //unique requests only which will hold up the data
 
+let pageHeight;
 let callbackCount = 0
 let callCount = 0;
 let uniqueItems; 
@@ -43,7 +48,7 @@ let lost = false;
 
 $(document).ready(function(){
 	clicked = false;
-	divClone = $("#divid1").html();
+	divClone = $("#wrapper").html();
 	JFCustomWidget.subscribe("ready", function(){ 
 		// implement jotform options
 		// fontSize = parseInt(JFCustomWidget.getWidgetSetting('fontSize'));
@@ -189,6 +194,8 @@ function getItemLevel(locale, realm, name , func){ // getItemLevel(locale, grabR
 }
 
 function addAltx(locale, realm, name, obj){ //, divid
+	sizeObject.pageHeight = sizeObject.pageHeight + 18.5;
+	JFCustomWidget.requestFrameResize(sizeObject);
 	name = upperCaseFirstL(name);
 	realm = toTitleCase(realm.toString());
 
@@ -348,6 +355,8 @@ function loopThrough(){
 								guild : guild,
 								url: "rankings/" + boss + ".txt",
 								success: function(sData){
+									sizeObject.pageHeight = sizeObject.pageHeight + 38.4
+									JFCustomWidget.requestFrameResize(sizeObject);
 									let div = document.getElementById(boss);
 									let img = document.createElement("img");	
 									let text = document.createElement('td1');
@@ -373,7 +382,7 @@ function loopThrough(){
 									}
 								},
 								error: function(){ 
-									console.log("ff")
+									console.log("Guild Request fail for " + guild);
 								} 
 							});	
 						}	
@@ -450,6 +459,8 @@ function mainPane(){
 	stamps = [];
 	callCount = 0;
 	callbackCount = 0;
+	sizeObject.pageHeight = 549;
+
 
 // // [[[[--------------------------------Html-Grab-----------------------------------------------]]]]
 
@@ -478,7 +489,7 @@ function mainPane(){
 		let lineLength = lines.length;
 		let merge = 0; // dont really use this anymore but could be needed when figuring out how to excludr merged character url request on alt character guild pushes
 		let k = 0;
-		document.getElementById("alts").innerHTML = "ALTS"; //Refresh on new submit
+		document.getElementById("alts").innerHTML = "Alt Characters"; //Refresh on new submit
 		
 		for (i = 0; i < lineLength; i++){
 			if (lines[i].indexOf("<a href=\"/characters") != -1 ) { // ALTS
@@ -562,7 +573,6 @@ function mainPane(){
 		}
 
 		let altLength = altsArray.length;
-
 		altsArray.forEach(function(alt){
 			let url = proxy + buildTrackUrl(alt.locale, alt.realm, alt.name);
 			readToon(url, function(){
@@ -577,7 +587,7 @@ function mainPane(){
 	  },
 	  error: function (){ // Reset on fail // Proxy fallback 	
   		clicked = false;
-	  	$("#divid1").html(divClone); 
+	  	$("#wrapper").html(divClone); 
 	  	alert("Invalid Character");// if (fail == 0){
 	  	// 	proxy = 'https://crossorigin.me/'
 	  	// 	fail = fail + 1;
@@ -624,15 +634,16 @@ function mainPane(){
 		let progressString = document.getElementById("progress").outerHTML;
 		let wlogsString = document.getElementById("wlogs").outerHTML;
 		let killsString = document.getElementById("kills").outerHTML;
+		let artifactString = document.getElementById("artifact").outerHTML;
 			
 		let result = {}
 		result.valid = false;
 		 
-		if(clicked) /// this?  charName != "" && realm != "" && 
+		if(clicked) /// successfull request in order to be valid JF data
 			result.valid = true;
 
 		//metric
-		result.value = blizzString + progressString + wlogsString + killsString + altsHtml ;
+		result.value = blizzString + progressString + wlogsString + artifactString + killsString + altsHtml ;
 		JFCustomWidget.sendSubmit(result);
 
 	});
