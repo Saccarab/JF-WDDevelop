@@ -459,6 +459,7 @@ function mainPane(){
 	callCount = 0;
 	callbackCount = 0;
 	sizeObject.height = 549;
+	JFCustomWidget.requestFrameResize(sizeObject);
 
 
 // // [[[[--------------------------------Html-Grab-----------------------------------------------]]]]
@@ -587,6 +588,8 @@ function mainPane(){
 	  error: function (){ // Reset on fail // Proxy fallback 	
   		clicked = false;
 	  	$("#wrapper").html(divClone); 
+	  	sizeObject.height = 549;
+		JFCustomWidget.requestFrameResize(sizeObject);
 	  	alert("Invalid Character");// if (fail == 0){
 	  	// 	proxy = 'https://crossorigin.me/'
 	  	// 	fail = fail + 1;
