@@ -354,7 +354,7 @@ function loopThrough(){
 								guild : guild,
 								url: "rankings/" + boss + ".txt",
 								success: function(sData){
-									sizeObject.height = sizeObject.height + 38.4
+									
 									JFCustomWidget.requestFrameResize(sizeObject);
 									let div = document.getElementById(boss);
 									let img = document.createElement("img");	
@@ -370,6 +370,7 @@ function loopThrough(){
 
 									for (i=0 ; i < lineCount ; i++){
 										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName){ //temp fix??
+											sizeObject.height = sizeObject.height + 38.4
 											rank = i + 1
 											img.src = "https://raw.githubusercontent.com/Saccarab/WoW-Resume/master/images/" + boss + ".jpg";
 											//had to use absolute path for the jotform side of image handling
