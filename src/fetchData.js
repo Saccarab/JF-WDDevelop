@@ -26,7 +26,7 @@ let charName;
 let realm;
 let locale;
 let sizeObject = {
-	pageHeight : 0
+	height : 0
 }
 
 let altsHtml = "Alt Characters" //use actual alts div instead building this aw?
@@ -37,7 +37,6 @@ let guildRequestList = [];  //guilds to be requested
 let altsArray = [] //alt toons
 let fresh = []; //unique requests only which will hold up the data
 
-let pageHeight;
 let callbackCount = 0
 let callCount = 0;
 let uniqueItems; 
@@ -194,7 +193,7 @@ function getItemLevel(locale, realm, name , func){ // getItemLevel(locale, grabR
 }
 
 function addAltx(locale, realm, name, obj){ //, divid
-	sizeObject.pageHeight = sizeObject.pageHeight + 18.5;
+	sizeObject.height = sizeObject.height + 18.5;
 	JFCustomWidget.requestFrameResize(sizeObject);
 	name = upperCaseFirstL(name);
 	realm = toTitleCase(realm.toString());
@@ -355,7 +354,7 @@ function loopThrough(){
 								guild : guild,
 								url: "rankings/" + boss + ".txt",
 								success: function(sData){
-									sizeObject.pageHeight = sizeObject.pageHeight + 38.4
+									sizeObject.height = sizeObject.height + 38.4
 									JFCustomWidget.requestFrameResize(sizeObject);
 									let div = document.getElementById(boss);
 									let img = document.createElement("img");	
@@ -459,7 +458,7 @@ function mainPane(){
 	stamps = [];
 	callCount = 0;
 	callbackCount = 0;
-	sizeObject.pageHeight = 549;
+	sizeObject.height = 549;
 
 
 // // [[[[--------------------------------Html-Grab-----------------------------------------------]]]]
