@@ -373,18 +373,24 @@ function loopThrough(){
 
 									for (i=0 ; i < lineCount ; i++){
 										//rank check for migrated guild names as well. can put this out in a cleaner way sometime
-										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName || lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){ //temp fix??
+										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName ){ //temp fix??
 											sizeObject.height = sizeObject.height + 38.4
 											JFCustomWidget.requestFrameResize(sizeObject);
 											rank = i + 1
 											let tooltip = eval('tooltip_' + boss)
-											
-											// img.src = "https://raw.githubusercontent.com/Saccarab/WoW-Resume/master/images/" + boss + ".jpg";
-											// //had to use absolute path for the jotform side of image handling
-											// img.alt = boss
 											div.appendChild(tooltip)  
 											tooltip.removeAttribute('hidden')
 											text.innerHTML = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
+											div.appendChild(text)
+										}
+										else if(lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){
+											sizeObject.height = sizeObject.height + 38.4
+											JFCustomWidget.requestFrameResize(sizeObject);
+											rank = i + 1
+											let tooltip = eval('tooltip_' + boss)
+											div.appendChild(tooltip)  
+											tooltip.removeAttribute('hidden')
+											text.innerHTML = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildRealm);
 											div.appendChild(text)
 										}
 									}
