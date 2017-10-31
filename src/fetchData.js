@@ -19,6 +19,7 @@ const proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates ??
 
 // [[[[--------------------------------Initialize-------------------------------------------------------]]]]
 let divClone;
+let tooltipClone;
 let clicked;
 
 //global loads
@@ -48,6 +49,7 @@ let lost = false;
 $(document).ready(function(){
 	clicked = false;
 	divClone = $("#wrapper").html();
+	tooltipClone = $("#tooltip_block").html();
 	JFCustomWidget.subscribe("ready", function(){ 
 		// implement jotform options
 		// fontSize = parseInt(JFCustomWidget.getWidgetSetting('fontSize'));
@@ -451,7 +453,7 @@ function guildRank(fdata, boss, personalAchiev){
 function mainPane(){
 
 // [[[[--------------------------------Reset--Variables------------------------------------------]]]]
-	$("#wrapper").html(divClone); 
+	$("#tooltip_block").html(tooltipClone); 
 	fresh = []
 	playerGuilds = [];
 	altsArray = [];
