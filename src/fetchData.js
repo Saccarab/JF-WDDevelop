@@ -371,12 +371,12 @@ function loopThrough(){
 											JFCustomWidget.requestFrameResize(sizeObject);
 											rank = i + 1
 											let tooltip = eval('tooltip_' + boss)
-											let a = document.getElementById(tooltip)
+											
 											// img.src = "https://raw.githubusercontent.com/Saccarab/WoW-Resume/master/images/" + boss + ".jpg";
 											// //had to use absolute path for the jotform side of image handling
 											// img.alt = boss
-											div.appendChild(a)  
-											a.removeAttribute('hidden')
+											div.appendChild(tooltip)  
+											tooltip.removeAttribute('hidden')
 											text.innerHTML = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
 											div.appendChild(text)
 										}
@@ -451,7 +451,7 @@ function guildRank(fdata, boss, personalAchiev){
 function mainPane(){
 
 // [[[[--------------------------------Reset--Variables------------------------------------------]]]]
-
+	$("#wrapper").html(divClone); 
 	fresh = []
 	playerGuilds = [];
 	altsArray = [];

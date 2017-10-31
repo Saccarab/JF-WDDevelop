@@ -277,43 +277,43 @@ function getBossText(boss) {
 
 	switch(boss){
 		case "ragnaros":
-			bossText = " rank "
+			bossText = " Rank "
 			break;
 		case "deathwing":
-			bossText = " rank "
+			bossText = " Rank "
 			break;
 		case "emperor":
-			bossText = " rank "
+			bossText = " Rank "
 			break;
 		case "shekzeer":
-			bossText = " rank "
+			bossText = " Rank "
 			break;
 		case "shaoffear":
-			bossText = " rank "
+			bossText = " Rank "
 			break;
 		case "raden":
-			bossText = " rank "
+			bossText = " Rank "
 			break;
 		case "garrosh":
-			bossText = " rank "
+			bossText = " Rank "
 			break;
 		case "guldan": 
-			bossText =  " rank "
+			bossText =  " Rank "
 			break;
 		case "helya":
-			bossText = " rank "
+			bossText = " Rank "
 			break;
 		case "xavius":
-			bossText =  " rank ";
+			bossText =  " Rank ";
 			break;
 		case "archimonde":
-			bossText = " rank ";
+			bossText = " Rank ";
 			break;	
 		case "blackhand":
-			bossText = " rank ";
+			bossText = " Rank ";
 			break;
 		case "imperator":
-			bossText = " rank ";
+			bossText = " Rank ";
 			break;
 		default :
 			console.log("unknown boss text?");
