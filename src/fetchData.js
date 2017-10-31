@@ -45,6 +45,7 @@ let uniqueRequest;
 
 let stamps;
 let lost = false;
+let process = false;
 
 $(document).ready(function(){
 	clicked = false;
@@ -371,6 +372,7 @@ function loopThrough(){
 										guildMigrateBlocker = guild.oldRealm;
 
 									for (i=0 ; i < lineCount ; i++){
+										//rank check for migrated guild names as well. can put this out in a cleaner way sometime
 										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName || lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){ //temp fix??
 											sizeObject.height = sizeObject.height + 38.4
 											JFCustomWidget.requestFrameResize(sizeObject);
@@ -403,6 +405,8 @@ function loopThrough(){
 		alert('Data might be lost due to disbanded guild.')
 		lost = false;
 	}
+
+	process = false;
 }
 
 	// Check if the player killed the given world of warcraft boss by blizz achievement api
@@ -455,6 +459,12 @@ function guildRank(fdata, boss, personalAchiev){
 
 function mainPane(){
 
+	if (process){
+		alert('no spamerino plx');
+		return;
+	}
+
+	process = true;
 // [[[[--------------------------------Reset--Variables------------------------------------------]]]]
 	$("#tooltip_block").html(tooltipClone); 
 	fresh = []
@@ -598,6 +608,7 @@ function mainPane(){
   		sizeObject.height = 549;
 		JFCustomWidget.requestFrameResize(sizeObject);
 	  	$("#wrapper").html(divClone); 
+	  	process = false;
 	  	alert("Invalid Character");// if (fail == 0){
 	  	// 	proxy = 'https://crossorigin.me/'
 	  	// 	fail = fail + 1;
