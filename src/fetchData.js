@@ -340,6 +340,7 @@ function loopThrough(){
 	tooltipClone = $("#tooltip_block").html();
 	guildMigrate();
 	let list = [1,2,3,4,5,6,7,8,9,10,11,12,13]; //prevent overlapping on the same boss
+	// remove recurring boss requests when it is found
 	guildRequestList.forEach(function(guild){
 		let check = guild.boss;
 		if (list.includes(check)){
@@ -374,7 +375,7 @@ function loopThrough(){
 									for (i=0 ; i < lineCount ; i++){
 										//rank check for migrated guild names as well. 
 										//can put this out in a cleaner way sometime
-										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName || lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){ //temp fix??
+										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName){ //temp fix??
 											sizeObject.height = sizeObject.height + 44.1
 											JFCustomWidget.requestFrameResize(sizeObject);
 											rank = i + 1
