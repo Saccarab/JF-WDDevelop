@@ -371,7 +371,7 @@ function loopThrough(){
 										guildMigrateBlocker = guild.oldRealm;
 
 									for (i=0 ; i < lineCount ; i++){
-										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName){ //temp fix??
+										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName || lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){ //temp fix??
 											sizeObject.height = sizeObject.height + 38.4
 											JFCustomWidget.requestFrameResize(sizeObject);
 											rank = i + 1
