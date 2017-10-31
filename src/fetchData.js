@@ -59,7 +59,6 @@ $(document).ready(function(){
 
 $(window).on("load", function(){
 	divClone = $("#wrapper").html();
-	tooltipClone = $("#tooltip_block").html();
 });
 
 function readToon(url, callback){
@@ -338,6 +337,7 @@ function guildMigrate(){
 }
 
 function loopThrough(){
+	tooltipClone = $("#tooltip_block").html();
 	guildMigrate();
 	let list = [1,2,3,4,5,6,7,8,9,10,11,12,13]; //prevent overlapping on the same boss
 	guildRequestList.forEach(function(guild){
@@ -373,30 +373,20 @@ function loopThrough(){
 
 									for (i=0 ; i < lineCount ; i++){
 										//rank check for migrated guild names as well. can put this out in a cleaner way sometime
-										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName ){ //temp fix??
+										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName || lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){ //temp fix??
 											sizeObject.height = sizeObject.height + 38.4
 											JFCustomWidget.requestFrameResize(sizeObject);
 											rank = i + 1
 											let tooltip = eval('tooltip_' + boss)
 											div.appendChild(tooltip)  
 											tooltip.removeAttribute('hidden')
-											text.innerHTML = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
-											div.appendChild(text)
-										}
-										else if(lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){
-											sizeObject.height = sizeObject.height + 38.4
-											JFCustomWidget.requestFrameResize(sizeObject);
-											rank = i + 1
-											let tooltip = eval('tooltip_' + boss)
-											div.appendChild(tooltip)  
-											tooltip.removeAttribute('hidden')
-											text.innerHTML = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guild.guildRealm);
+											text.innerHTML = getBossText(boss) + rank + " in " + blizzspaceToSpace(guildMigrateBlocker) + "-" + blizzspaceToSpace(guildMigrateBlocker);
 											div.appendChild(text)
 										}
 									}
 								},
 								error: function(){ 
-									console.log("Guild Request fail for " + guild);
+									console.log("Guild Request fail for " + guild.guildName + " " + guild.guildRealm);
 								} 
 							});	
 						}	
