@@ -355,7 +355,6 @@ function loopThrough(){
 								url: "rankings/" + boss + ".txt",
 								success: function(sData){
 									let div = document.getElementById(boss);
-									let a = document.createElement("a");	
 									let text = document.createElement('td1');
 									let lines = sData.split("\n");
 									lineCount = lines.length;
@@ -371,14 +370,14 @@ function loopThrough(){
 											sizeObject.height = sizeObject.height + 38.4
 											JFCustomWidget.requestFrameResize(sizeObject);
 											rank = i + 1
-											let achiev = eval(boss+'Personal')
-											a.setAttribute("href", "http://www.wowhead.com/achievement=" + achiev)
-											a.setAttribute("rel", "achievement=" + achiev)
+											let tooltip = eval('tooltip_' + boss)
+											let a = document.getElementById(tooltip)
 											// img.src = "https://raw.githubusercontent.com/Saccarab/WoW-Resume/master/images/" + boss + ".jpg";
 											// //had to use absolute path for the jotform side of image handling
 											// img.alt = boss
 											div.appendChild(a)  
-											text.innerHTML = getBossText(boss) + rank + " in guild " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
+											a.removeAttribute('hidden')
+											text.innerHTML = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
 											div.appendChild(text)
 										}
 									}
