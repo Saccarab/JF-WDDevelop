@@ -390,7 +390,7 @@ function loopThrough(){
 											let tooltip = eval('tooltip_' + boss)
 											div.appendChild(tooltip)  
 											tooltip.removeAttribute('hidden')
-											text.innerHTML = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildRealm);
+											text.innerHTML = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guild.guildRealm);
 											div.appendChild(text)
 										}
 									}
