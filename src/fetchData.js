@@ -375,7 +375,7 @@ function loopThrough(){
 										//rank check for migrated guild names as well. 
 										//can put this out in a cleaner way sometime
 										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName || lines[i].trim() === guild.guildLocale + guild.guildRealm + guild.guildName){ //temp fix??
-											sizeObject.height = sizeObject.height + 38.4
+											sizeObject.height = sizeObject.height + 44.1
 											JFCustomWidget.requestFrameResize(sizeObject);
 											rank = i + 1
 											let tooltip = eval('tooltip_' + boss)
