@@ -48,14 +48,17 @@ let lost = false;
 
 $(document).ready(function(){
 	clicked = false;
-	divClone = $("#wrapper").html();
-	tooltipClone = $("#tooltip_block").html();
 	JFCustomWidget.subscribe("ready", function(){ 
 		// implement jotform options
 		// fontSize = parseInt(JFCustomWidget.getWidgetSetting('fontSize'));
 		// fontFamily = JFCustomWidget.getWidgetSetting('fontFamily');
 		// fontColor = JFCustomWidget.getWidgetSetting('fontColor');
 	});	
+});
+
+$(window).on("load", function(){
+	divClone = $("#wrapper").html();
+	tooltipClone = $("#tooltip_block").html();
 });
 
 function readToon(url, callback){
