@@ -1,4 +1,5 @@
 .center {
+    text-align: center; 
     margin: auto;
     width: 80%;
     border: 1px solid #000001; 
@@ -17,6 +18,37 @@
 
 .background{
     background: url("../images/background-wow-top.jpg");
+}
+
+input { 
+    text-align: center; 
+}
+
+select:required:invalid {
+  color: gray;
+}
+
+option[value=""][disabled] {
+  display: none;
+}
+option {
+  color: white;
+}
+
+::-webkit-input-placeholder {
+   text-align: center;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   text-align: center;  
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   text-align: center;  
+}
+
+:-ms-input-placeholder {  
+   text-align: center; 
 }
 
 .mainButton{

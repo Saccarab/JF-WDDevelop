@@ -355,7 +355,7 @@ function loopThrough(){
 								url: "rankings/" + boss + ".txt",
 								success: function(sData){
 									let div = document.getElementById(boss);
-									let img = document.createElement("img");	
+									let a = document.createElement("a");	
 									let text = document.createElement('td1');
 									let lines = sData.split("\n");
 									lineCount = lines.length;
@@ -371,10 +371,13 @@ function loopThrough(){
 											sizeObject.height = sizeObject.height + 38.4
 											JFCustomWidget.requestFrameResize(sizeObject);
 											rank = i + 1
-											img.src = "https://raw.githubusercontent.com/Saccarab/WoW-Resume/master/images/" + boss + ".jpg";
-											//had to use absolute path for the jotform side of image handling
-											img.alt = boss
-											div.appendChild(img)  
+											let achiev = eval(boss+'Personal')
+											a.setAttribute("href", "http://www.wowhead.com/achievement=" + achiev)
+											a.setAttribute("rel", "achievement=" + achiev)
+											// img.src = "https://raw.githubusercontent.com/Saccarab/WoW-Resume/master/images/" + boss + ".jpg";
+											// //had to use absolute path for the jotform side of image handling
+											// img.alt = boss
+											div.appendChild(a)  
 											text.innerHTML = getBossText(boss) + rank + " in guild " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
 											div.appendChild(text)
 										}
@@ -449,6 +452,7 @@ function guildRank(fdata, boss, personalAchiev){
 function mainPane(){
 
 // [[[[--------------------------------Reset--Variables------------------------------------------]]]]
+
 	fresh = []
 	playerGuilds = [];
 	altsArray = [];
@@ -587,9 +591,9 @@ function mainPane(){
 	  },
 	  error: function (){ // Reset on fail // Proxy fallback 	
   		clicked = false;
-	  	$("#wrapper").html(divClone); 
-	  	sizeObject.height = 549;
+  		sizeObject.height = 549;
 		JFCustomWidget.requestFrameResize(sizeObject);
+	  	$("#wrapper").html(divClone); 
 	  	alert("Invalid Character");// if (fail == 0){
 	  	// 	proxy = 'https://crossorigin.me/'
 	  	// 	fail = fail + 1;

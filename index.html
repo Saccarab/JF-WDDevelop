@@ -4,31 +4,37 @@
 <head class = "center">
 	<script src = "https://js.jotform.com/JotFormCustomWidget.min.js"></script>
 	<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script> var whTooltips = {colorLinks: true, iconizeLinks: true, renameLinks: false, iconSize: "medium"};</script>
+	<script src="http://wow.zamimg.com/widgets/power.js"></script>
 	<link rel = "stylesheet" type = "text/css" href = "css/styles.css">
 	<link rel = "icon" href = "favicon.ico">
 </head>
 		
 	<body>
+
 		<div id = "wrapper" class = "background">
 			<div id = "divid1" class = "center" >
-			    Character Name <input type = "text" name = "characterName" id = "char"><br><br>
+			    <input type = "text" name = "characterName" id = "char" placeholder = "Character Name"><br><br>
 
-				Locale <select name = "locale" id = "locale"><br><br>
-				 	<option value="EU">EU</option>
-				    <option value="US" >US</option>
+			    <input type = "text" name = "realm" id = "realm" placeholder = "Realm"><br><br> 
+
+		  		<select style = "text-align-last:center;" name = "metric" id = "metric" required=""><br><br>
+		  		  <option value = "" disabled selected>Role</option>
+				  <option value = "dps">Damage Dealer</option>
+				  <option value = "hps">Healer</option>
+				  <option value = "dps">Tank</option>
 				</select><br><br>
 
-				Realm <input type = "text" name = "realm" id = "realm"><br><br> 
-		  		Main Role <select name = "metric" id = "metric"><br><br>
-				  <option value="hps">Healer</option>
-				  <option value="dps">Damage Dealer</option>
-				  <option value="dps">Tank</option>
+				<select name = "locale" id = "locale"><br><br>
+				 	<option value="EU">EU</option>
+				    <option value="US" >US</option>
 				</select><br><br>
 
 				<button class = "mainButton" onclick="mainPane()">Get Resume</button><br>
 			</div>
 
 			<div id = "w/e" class = "center">
+				<a href="http://www.wowhead.com/achievement=8680/liberator-of-orgrimmar" target="_blank" rel = "achievement=8680"></a><br>
 				<a href="https://www.worldofwarcraft.com" target="_blank" id = "blizz">
 					<img border="0" alt="armory" src="https://s-media-cache-ak0.pinimg.com/236x/18/f2/c2/18f2c237688c6a4395e0f6a702743a7c.jpg
 			" width="100" height="100"></a>
@@ -39,7 +45,7 @@
 			" width="100" height="100"></a>
 			</div>
 
-			<div id = "artifact" class = "center"> 
+			<div id = "artifact" class = "center" > 
 			</div>
 
 			<div id = "alts" class = "center"> Alt Characters
