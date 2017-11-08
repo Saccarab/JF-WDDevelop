@@ -37,6 +37,7 @@ let playerGuilds = []; //whole list
 let guildRequestList = [];  //guilds to be requested
 let altsArray = [] //alt toons
 let fresh = []; //unique requests only which will hold up the data
+let submitHtml;
 
 let callbackCount = 0
 let callCount = 0;
@@ -362,7 +363,10 @@ function loopThrough(){
 								url: "rankings/" + boss + ".txt",
 								success: function(sData){
 									let div = document.getElementById(boss);
+									let bufferDiv = document.createElement("div")
+									let rankings = document.getElementById(boss);
 									let text = document.createElement('td1');
+									let img = document.createElement("img");	
 									let lines = sData.split("\n");
 									lineCount = lines.length;
 									let rank;
@@ -378,12 +382,17 @@ function loopThrough(){
 										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName){ //temp fix??
 											sizeObject.height = sizeObject.height + 44.1
 											JFCustomWidget.requestFrameResize(sizeObject);
+											img.src = "images/" + boss + ".jpg";
+											img.alt = boss
+											bufferDiv.appendChild(img)
 											rank = i + 1
 											let tooltip = eval('tooltip_' + boss)
-											div.appendChild(tooltip)  
+											div.appendChild(tooltip)
 											tooltip.removeAttribute('hidden')
 											text.innerHTML = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
+											bufferDiv.appendChild(text)
 											div.appendChild(text)
+											submitHtml.outerHTML = submitHtml.outerHTML + bufferDiv.outerHTML
 										}
 									}
 								},
@@ -474,6 +483,7 @@ function mainPane(){
 	stamps = [];
 	callCount = 0;
 	callbackCount = 0;
+	submitHtml = ""
 	sizeObject.height = 549;
 	JFCustomWidget.requestFrameResize(sizeObject);
 
@@ -652,7 +662,6 @@ function mainPane(){
 		let blizzString = document.getElementById("blizz").outerHTML;		
 		let progressString = document.getElementById("progress").outerHTML;
 		let wlogsString = document.getElementById("wlogs").outerHTML;
-		let killsString = document.getElementById("kills").outerHTML;
 		let artifactString = document.getElementById("artifact").outerHTML;
 			
 		let result = {}
@@ -662,7 +671,7 @@ function mainPane(){
 			result.valid = true;
 
 		//metric
-		result.value = blizzString + progressString + wlogsString + artifactString + killsString + altsHtml ;
+		result.value = blizzString + progressString + wlogsString + artifactString + submitHtml + altsHtml ;
 		JFCustomWidget.sendSubmit(result);
 
 	});
