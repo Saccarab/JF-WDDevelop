@@ -37,7 +37,7 @@ let playerGuilds = []; //whole list
 let guildRequestList = [];  //guilds to be requested
 let altsArray = [] //alt toons
 let fresh = []; //unique requests only which will hold up the data
-let submitHtml;
+let submitHtml = ""
 
 let callbackCount = 0
 let callCount = 0;
@@ -382,7 +382,7 @@ function loopThrough(){
 										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName){ //temp fix??
 											sizeObject.height = sizeObject.height + 44.1
 											JFCustomWidget.requestFrameResize(sizeObject);
-											img.src = "images/" + boss + ".jpg";
+											img.src = "https://github.com/Saccarab/WoW-Resume/blob/master/images" + boss + ".jpg";
 											img.alt = boss
 											bufferDiv.appendChild(img)
 											rank = i + 1
