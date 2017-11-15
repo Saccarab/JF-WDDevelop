@@ -81,8 +81,8 @@ function mainPane(){
 	callCount = 0;
 	callbackCount = 0;
 	sizeObject.height = 549;
-	submitHtml.innerHTML = "----------------First Kill Rankings----------------\n"
-	altsHtml = "----------------Alt Characters----------------\n" 
+	submitHtml.innerHTML = "\n----------------First Kill Rankings----------------\n"
+	altsHtml = "\n----------------Alt Characters----------------\n"
 	JFCustomWidget.requestFrameResize(sizeObject);
 
 
