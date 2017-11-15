@@ -33,10 +33,10 @@ let sizeObject = {
 
 let playerGuilds = []; //whole list
 let guildRequestList = [];  //guilds to be requested
-let altsArray = [] //alt toons
+let altsArray = [] //alt toons	
 let fresh = []; //unique requests only which will hold up the data
 
-
+let submitHtml;
 let callbackCount = 0
 let callCount = 0;
 let uniqueItems; 
@@ -70,6 +70,7 @@ function mainPane(){
 	process = true;
 // [[[[--------------------------------Reset--Variables------------------------------------------]]]]
 	
+
 	fresh = []
 	playerGuilds = [];
 	altsArray = [];
@@ -80,7 +81,9 @@ function mainPane(){
 	callCount = 0;
 	callbackCount = 0;
 	sizeObject.height = 549;
+	submitHtml = document.createElement('div')
 	JFCustomWidget.requestFrameResize(sizeObject);
+
 
 // // [[[[--------------------------------Html-Grab-----------------------------------------------]]]]
 
@@ -263,8 +266,6 @@ function mainPane(){
 		let progressString = document.getElementById("progress").outerHTML;
 		let wlogsString = document.getElementById("wlogs").outerHTML;
 		let artifactString = document.getElementById("artifact").outerHTML;
-		let submitHtml = document.getElementById("killsSubmit").removeAttribute("hidden");
-		submitHtml = document.getElementById("killsSubmit").outerHTML;
 			
 		let result = {}
 		result.valid = false;
@@ -273,7 +274,7 @@ function mainPane(){
 			result.valid = true;
 
 		//metric
-		result.value = blizzString + progressString + wlogsString + artifactString + submitHtml + altsHtml ;
+		result.value = blizzString + progressString + wlogsString + artifactString + submitHtml.outerHTML + altsHtml ;
 		JFCustomWidget.sendSubmit(result);
 	});
 }
@@ -594,7 +595,6 @@ function loopThrough(){
 								url: "rankings/" + boss + ".txt",
 								success: function(sData){
 									let div = document.getElementById(boss);
-									let submitHtml = document.getElementById("killsSubmit")
 									let bufferDiv = document.createElement("div")
 									let rankings = document.getElementById(boss);
 									let img = document.createElement("img");	
