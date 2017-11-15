@@ -81,7 +81,8 @@ function mainPane(){
 	callCount = 0;
 	callbackCount = 0;
 	sizeObject.height = 549;
-	submitHtml.innerHTML = "First Kill Rankings\n"
+	submitHtml.innerHTML = "----------------First Kill Rankings----------------\n"
+	altsHtml = "----------------Alt Characters----------------\n" 
 	JFCustomWidget.requestFrameResize(sizeObject);
 
 
@@ -109,7 +110,6 @@ function mainPane(){
 	  success: function(data){
 
 	  	clicked = true;
-	  	altsHtml = "Alt Characters\n" 
 	  	let loc;
 		let name;
 		let grabRealm;
