@@ -30,14 +30,10 @@ let sizeObject = {
 	height : 0
 }
 
-let altsHtml = "Alt Characters" //use actual alts div instead building this aw?
-let killsHtml = document.getElementById("kills").innerHTML
-
 let playerGuilds = []; //whole list
 let guildRequestList = [];  //guilds to be requested
 let altsArray = [] //alt toons
 let fresh = []; //unique requests only which will hold up the data
-let submitHtml = ""
 
 let callbackCount = 0
 let callCount = 0;
@@ -72,13 +68,14 @@ function mainPane(){
 	process = true;
 // [[[[--------------------------------Reset--Variables------------------------------------------]]]]
 	$("#tooltip_block").html(tooltipClone); 
+	$("#wrapper").html(divClone); 
+
 	fresh = []
 	playerGuilds = [];
 	altsArray = [];
 	guildRequestList = [];
 	uniqueItems = [];
 	uniqueRequest = [];
-	submitHtml = document.createElement('div')
 	stamps = [];
 	callCount = 0;
 	callbackCount = 0;
@@ -88,7 +85,6 @@ function mainPane(){
 
 // // [[[[--------------------------------Html-Grab-----------------------------------------------]]]]
 
-	document.getElementById("kills").innerHTML = killsHtml
 	charName = fixName(document.getElementById('char').value);
 	realm = toTitleCase(document.getElementById('realm').value).trim();
 	locale = document.getElementById('locale').value;
@@ -113,7 +109,6 @@ function mainPane(){
 		let lineLength = lines.length;
 		let merge = 0; // dont really use this anymore but could be needed when figuring out how to excludr merged character url request on alt character guild pushes
 		let k = 0;
-		document.getElementById("alts").innerHTML = "Alt Characters"; //Refresh on new submit
 		
 		for (i = 0; i < lineLength; i++){
 			if (lines[i].indexOf("<a href=\"/characters") != -1 ) { // ALTS
@@ -256,15 +251,14 @@ function mainPane(){
 	let blizzString = document.getElementById("blizz").children[0].text;
 	document.getElementById("submit").style.backgroundColor = '#D3D3D3'
 	JFCustomWidget.subscribe("submit", function(){
-
-		data = {
-			value:"Test success"
-		}
 	
 		let blizzString = document.getElementById("blizz").outerHTML;		
 		let progressString = document.getElementById("progress").outerHTML;
 		let wlogsString = document.getElementById("wlogs").outerHTML;
 		let artifactString = document.getElementById("artifact").outerHTML;
+		let alts = document.getElementById("alts").outerHTML;
+		let submitHtml = document.getElementById("killsSubmit").removeAttribute("hidden");
+		submitHtml = document.getElementById("killsSubmit").outerHTML;
 			
 		let result = {}
 		result.valid = false;
@@ -273,7 +267,7 @@ function mainPane(){
 			result.valid = true;
 
 		//metric
-		result.value = blizzString + progressString + wlogsString + artifactString + submitHtml.outerHTML + altsHtml ;
+		result.value = blizzString + progressString + wlogsString + artifactString + submitHtml + alts ;
 		JFCustomWidget.sendSubmit(result);
 	});
 }
@@ -341,8 +335,6 @@ function addAltx(locale, realm, name, obj){ //, divid
 	link.style.color = getClassColor(obj.characterClass);
 	div.appendChild(link);
 	div.appendChild(text);
-	altsHtml = altsHtml + div.outerHTML + "\n";
-
 	div.appendChild(button);  //button on submission 
 	alts.appendChild(div);	
 }
@@ -431,7 +423,6 @@ function guildRank(fdata, boss, personalAchiev){
 				uniqueRequest.push(JSON.parse(JSON.stringify(guildIter)))
 				guildIter.dateJoin = temp
 				guildIter.dateLeave = temp2
-				
 			}
 		});
 
@@ -596,6 +587,7 @@ function loopThrough(){
 								url: "rankings/" + boss + ".txt",
 								success: function(sData){
 									let div = document.getElementById(boss);
+									let submitHtml = document.getElementById("killsSubmit")
 									let bufferDiv = document.createElement("div")
 									let rankings = document.getElementById(boss);
 									let img = document.createElement("img");	

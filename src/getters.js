@@ -5,7 +5,7 @@
 function getClassColor(spec){
 	switch(spec){
 		case "priest":
-			return "#FFFFFF";
+			return "#D3D3D3";
 			break;
 		case "death knight":
 			return "#C41F3B";
