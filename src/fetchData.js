@@ -62,8 +62,6 @@ $(window).on("load", function(){
 
 function mainPane(){
 
-	
-
 	if (process){
 		alert('no spamerino plx');
 		return;
@@ -108,6 +106,7 @@ function mainPane(){
 	  success: function(data){
 
 	  	clicked = true;
+	  	altsHtml = "Alt Characters" 
 	  	let loc;
 		let name;
 		let grabRealm;
@@ -264,7 +263,6 @@ function mainPane(){
 		let progressString = document.getElementById("progress").outerHTML;
 		let wlogsString = document.getElementById("wlogs").outerHTML;
 		let artifactString = document.getElementById("artifact").outerHTML;
-		let alts = document.getElementById("alts").outerHTML;
 		let submitHtml = document.getElementById("killsSubmit").removeAttribute("hidden");
 		submitHtml = document.getElementById("killsSubmit").outerHTML;
 			
@@ -275,7 +273,7 @@ function mainPane(){
 			result.valid = true;
 
 		//metric
-		result.value = blizzString + progressString + wlogsString + artifactString + submitHtml + alts ;
+		result.value = blizzString + progressString + wlogsString + artifactString + submitHtml + altsHtml ;
 		JFCustomWidget.sendSubmit(result);
 	});
 }
@@ -343,6 +341,7 @@ function addAltx(locale, realm, name, obj){ //, divid
 	link.style.color = getClassColor(obj.characterClass);
 	div.appendChild(link);
 	div.appendChild(text);
+	altsHtml = altsHtml + div.outerHTML + "\n";
 	div.appendChild(button);  //button on submission 
 	alts.appendChild(div);	
 }
@@ -614,7 +613,7 @@ function loopThrough(){
 										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName){ //temp fix??
 											sizeObject.height = sizeObject.height + 44.1
 											JFCustomWidget.requestFrameResize(sizeObject);
-											img.src = "https://github.com/Saccarab/WoW-Resume/blob/master/images/" + boss + ".jpg";
+											img.src = "https://raw.githubusercontent.com/Saccarab/WoW-Resume/master/images/" + boss + ".jpg";
 											img.alt = boss
 											bufferDiv.appendChild(img)
 											rank = i + 1
