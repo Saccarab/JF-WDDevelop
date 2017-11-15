@@ -599,7 +599,6 @@ function loopThrough(){
 									let div = document.getElementById(boss);
 									let bufferDiv = document.createElement("div")
 									let rankings = document.getElementById(boss);
-									let text = document.createElement('td1');
 									let img = document.createElement("img");	
 									let lines = sData.split("\n");
 									lineCount = lines.length;
@@ -623,10 +622,12 @@ function loopThrough(){
 											let tooltip = eval('tooltip_' + boss)
 											div.appendChild(tooltip)
 											tooltip.removeAttribute('hidden')
-											text.innerHTML = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
+											let txt = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
+											let text =  document.createTextNode(txt)
+											let text2 = document.createTextNode(txt)
 											bufferDiv.appendChild(text)
-											div.appendChild(text)
 											submitHtml.appendChild(bufferDiv)
+											div.appendChild(text2)								
 										}
 									}
 								},
