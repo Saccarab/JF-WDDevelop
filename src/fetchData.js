@@ -620,12 +620,12 @@ function loopThrough(){
 											let tooltip = eval('tooltip_' + boss)
 											div.appendChild(tooltip)
 											tooltip.removeAttribute('hidden')
-											let txt = boss + ' ' getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
+											let txt = boss + " "  + getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
 											let txt2 = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
 
 											let text =  document.createTextNode(txt)
 											let text2 = document.createTextNode(txt2)
-											
+
 											bufferDiv.appendChild(text)
 											submitHtml.appendChild(bufferDiv)
 											div.appendChild(text2)								
