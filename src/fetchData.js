@@ -31,8 +31,6 @@ let sizeObject = {
 }
 
 let altsHtml = "Alt Characters" //use actual alts div instead building this aw?
-let killsHtml = document.getElementById("kills").innerHTML
-
 let playerGuilds = []; //whole list
 let guildRequestList = [];  //guilds to be requested
 let altsArray = [] //alt toons
@@ -88,7 +86,6 @@ function mainPane(){
 
 // // [[[[--------------------------------Html-Grab-----------------------------------------------]]]]
 
-	document.getElementById("kills").innerHTML = killsHtml
 	charName = fixName(document.getElementById('char').value);
 	realm = toTitleCase(document.getElementById('realm').value).trim();
 	locale = document.getElementById('locale').value;
@@ -254,7 +251,7 @@ function mainPane(){
 	document.getElementById("blizz").href = armoryText;
 	document.getElementById("progress").href = wowProgressText;
 	let blizzString = document.getElementById("blizz").children[0].text;
-	document.getElementById("blizz").style.backgroundColor = '#D3D3D3'
+	document.getElementById("submitHtml").style.backgroundColor = '#D3D3D3'
 	JFCustomWidget.subscribe("submit", function(){
 
 		data = {
