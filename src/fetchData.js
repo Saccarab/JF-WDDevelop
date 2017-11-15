@@ -36,7 +36,7 @@ let guildRequestList = [];  //guilds to be requested
 let altsArray = [] //alt toons	
 let fresh = []; //unique requests only which will hold up the data
 
-let submitHtml;
+let submitHtml = document.createElement('div')
 let callbackCount = 0
 let callCount = 0;
 let uniqueItems; 
@@ -81,7 +81,7 @@ function mainPane(){
 	callCount = 0;
 	callbackCount = 0;
 	sizeObject.height = 549;
-	submitHtml = document.createElement('div')
+	submitHtml.innerHTML = "First Kill Rankings\n"
 	JFCustomWidget.requestFrameResize(sizeObject);
 
 
@@ -109,7 +109,7 @@ function mainPane(){
 	  success: function(data){
 
 	  	clicked = true;
-	  	altsHtml = "Alt Characters" 
+	  	altsHtml = "Alt Characters\n" 
 	  	let loc;
 		let name;
 		let grabRealm;
@@ -620,7 +620,7 @@ function loopThrough(){
 											let tooltip = eval('tooltip_' + boss)
 											div.appendChild(tooltip)
 											tooltip.removeAttribute('hidden')
-											let txt = boss + " "  + getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
+											let txt = " " + upperCaseFirstL(boss) + getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
 											let txt2 = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
 
 											let text =  document.createTextNode(txt)
