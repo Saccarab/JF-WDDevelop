@@ -256,6 +256,11 @@ function mainPane(){
 	let blizzString = document.getElementById("blizz").children[0].text;
 	JFCustomWidget.subscribe("submit", function(){
 
+		data = {
+			value:"Test success"
+		}
+	
+		JFCustomWidget.sendData(data)
 		document.body.style.backgroundColor = "black";
 		let blizzString = document.getElementById("blizz").outerHTML;		
 		let progressString = document.getElementById("progress").outerHTML;
