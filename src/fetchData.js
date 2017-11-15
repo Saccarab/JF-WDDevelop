@@ -21,6 +21,7 @@ const proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates ??
 let divClone;
 let tooltipClone;
 let clicked;
+let firstClick = true;
 
 //global loads
 let charName;
@@ -34,6 +35,7 @@ let playerGuilds = []; //whole list
 let guildRequestList = [];  //guilds to be requested
 let altsArray = [] //alt toons
 let fresh = []; //unique requests only which will hold up the data
+
 
 let callbackCount = 0
 let callCount = 0;
@@ -60,6 +62,8 @@ $(window).on("load", function(){
 
 function mainPane(){
 
+	
+
 	if (process){
 		alert('no spamerino plx');
 		return;
@@ -67,9 +71,7 @@ function mainPane(){
 
 	process = true;
 // [[[[--------------------------------Reset--Variables------------------------------------------]]]]
-	$("#tooltip_block").html(tooltipClone); 
-	$("#wrapper").html(divClone); 
-
+	
 	fresh = []
 	playerGuilds = [];
 	altsArray = [];
@@ -82,7 +84,6 @@ function mainPane(){
 	sizeObject.height = 549;
 	JFCustomWidget.requestFrameResize(sizeObject);
 
-
 // // [[[[--------------------------------Html-Grab-----------------------------------------------]]]]
 
 	charName = fixName(document.getElementById('char').value);
@@ -91,6 +92,14 @@ function mainPane(){
 	let metric = document.getElementById('metric').value;
 	let img = document.createElement("img");
 	let url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
+
+	if (!firstClick){
+		$("#tooltip_block").html(tooltipClone); 
+		$("#wrapper").html(divClone); 
+	}
+
+	if (firstClick)
+		firstClick = false;
 
 // // [[[[--------------------------------Scraping-----------------------------------------------]]]]
 	$.ajax({
@@ -249,7 +258,6 @@ function mainPane(){
 	document.getElementById("blizz").href = armoryText;
 	document.getElementById("progress").href = wowProgressText;
 	let blizzString = document.getElementById("blizz").children[0].text;
-	document.getElementById("submit").style.backgroundColor = '#D3D3D3'
 	JFCustomWidget.subscribe("submit", function(){
 	
 		let blizzString = document.getElementById("blizz").outerHTML;		
