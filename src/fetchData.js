@@ -254,14 +254,13 @@ function mainPane(){
 	document.getElementById("blizz").href = armoryText;
 	document.getElementById("progress").href = wowProgressText;
 	let blizzString = document.getElementById("blizz").children[0].text;
+	document.getElementById("blizz").style.backgroundColor = '#D3D3D3'
 	JFCustomWidget.subscribe("submit", function(){
 
 		data = {
 			value:"Test success"
 		}
 	
-		JFCustomWidget.sendData(data)
-		document.body.style.backgroundColor = "black";
 		let blizzString = document.getElementById("blizz").outerHTML;		
 		let progressString = document.getElementById("progress").outerHTML;
 		let wlogsString = document.getElementById("wlogs").outerHTML;
@@ -274,7 +273,7 @@ function mainPane(){
 			result.valid = true;
 
 		//metric
-		result.value = blizzString + progressString + wlogsString + artifactString + submitHtml + altsHtml ;
+		result.value = blizzString + progressString + wlogsString + artifactString + submitHtml.outerHTML + altsHtml ;
 		JFCustomWidget.sendSubmit(result);
 	});
 }
