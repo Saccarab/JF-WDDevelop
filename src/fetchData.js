@@ -91,7 +91,6 @@ function mainPane(){
 	charName = fixName(document.getElementById('char').value);
 	realm = toTitleCase(document.getElementById('realm').value).trim();
 	locale = document.getElementById('locale').value;
-	let metric = document.getElementById('metric').value;
 	let img = document.createElement("img");
 	let url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
 
@@ -273,7 +272,6 @@ function mainPane(){
 		if(clicked) /// successfull request in order to be valid JF data
 			result.valid = true;
 
-		//metric
 		result.value = blizzString + progressString + wlogsString + artifactString + submitHtml.outerHTML + altsHtml ;
 		JFCustomWidget.sendSubmit(result);
 	});
