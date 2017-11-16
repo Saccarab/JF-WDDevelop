@@ -1,4 +1,4 @@
-.center {
+.center{
     text-align: center; 
     margin: auto;
     width: 80%;
@@ -14,41 +14,41 @@
     border-color : rgba(255,255,255,.3);
     font-size: 0.8625rem;
     font-family: sans-serif;
-	}
+}
 
 .background{
     background: url("../images/background-wow-top.jpg");
 }
 
-input { 
+input{ 
     text-align: center; 
 }
 
-select:required:invalid {
-  color: gray;
+select:required:invalid{
+    color: gray;
 }
 
-option[value=""][disabled] {
-  display: none;
+option[value=""][disabled]{
+    display: none;
 }
-option {
-  color: white;
-}
-
-::-webkit-input-placeholder {
-   text-align: center;
+option{
+    color: white;
 }
 
-:-moz-placeholder { /* Firefox 18- */
-   text-align: center;  
+::-webkit-input-placeholder{
+    text-align: center;
 }
 
-::-moz-placeholder {  /* Firefox 19+ */
-   text-align: center;  
+:-moz-placeholder{ /* Firefox 18- */
+    text-align: center;  
 }
 
-:-ms-input-placeholder {  
-   text-align: center; 
+::-moz-placeholder{  /* Firefox 19+ */
+    text-align: center;  
+}
+
+:-ms-input-placeholder{  
+    text-align: center; 
 }
 
 .mainButton{
@@ -64,24 +64,23 @@ button{
     border-radius: 0;
     border-width: 0.1px;
     font-family: sans-serif;
-
 }
 
-button:active {
+button:active{
     color: #ffffff;
     background-color: #5DBCD2;
 }
 
-button:focus {
+button:focus{
     outline:0;
 }
 
-button:hover {
+button:hover{
     color: #ffffff;
     background-color: #B06701;
 }
 
-input, textarea {
+input, textarea{
     background-color : black; 
     color: white;
     border: 1px solid #504137;
