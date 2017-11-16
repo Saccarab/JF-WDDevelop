@@ -57,7 +57,7 @@ $(document).ready(function(){
 });
 
 $(window).on("load", function(){
-	divClone = $("#wrapper").html();
+	divClone = $(".wrapper-js").html();
 });
 
 function mainPane(){
@@ -96,7 +96,7 @@ function mainPane(){
 
 	if (!firstClick){
 		$("#tooltip_block").html(tooltipClone); 
-		$("#wrapper").html(divClone); 
+		$(".wrapper-js").html(divClone); 
 	}
 
 	if (firstClick)
