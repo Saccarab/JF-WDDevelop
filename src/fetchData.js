@@ -218,7 +218,7 @@ function mainPane(){
   		clicked = false;
   		sizeObject.height = 549;
 		JFCustomWidget.requestFrameResize(sizeObject);
-	  	$("#wrapper").html(divClone); 
+	  	$("#wrapper-js").html(divClone); 
 	  	process = false;
 	  	alert("Invalid Character");// if (fail == 0){
 	  	// 	proxy = 'https://crossorigin.me/'
