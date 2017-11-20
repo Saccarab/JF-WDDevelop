@@ -210,17 +210,20 @@ function mainPane(){
 		}
 
 		let altLength = altsArray.length;
-		altsArray.forEach(function(alt){
-			let url = proxy + buildTrackUrl(alt.locale, alt.realm, alt.name);
-			readToon(url, function(){
-				callCount ++;
-				if (callCount === altLength){
-					rankings()
-					return
-				}
-			})
-		});
-
+		if (altLength === 0)
+			rankings()
+		else{
+			altsArray.forEach(function(alt){
+				let url = proxy + buildTrackUrl(alt.locale, alt.realm, alt.name);
+				readToon(url, function(){
+					callCount ++;
+					if (callCount === altLength){
+						rankings()
+						return
+					}
+				})
+			});
+		}
 	  },
 	  error: function (){ // Reset on fail // Proxy fallback 	
   		clicked = false;
