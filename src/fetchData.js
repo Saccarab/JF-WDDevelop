@@ -47,13 +47,21 @@ let lost = false;
 let process = false;
 
 $(document).ready(function(){
-	clicked = false;
+	$('#locale').bind('change', function () {
+        var value = $(this).val();
+         $('.realm-js').not('#' + value).hide();
+         $('#' + value).show()
+
+    }).trigger('change'); // Setup the initial states
+
 	JFCustomWidget.subscribe("ready", function(){ 
 		// implement jotform options
 		// fontSize = parseInt(JFCustomWidget.getWidgetSetting('fontSize'));
 		// fontFamily = JFCustomWidget.getWidgetSetting('fontFamily');
 		// fontColor = JFCustomWidget.getWidgetSetting('fontColor');
 	});	
+
+	clicked = false;
 });
 
 $(window).on("load", function(){
@@ -89,8 +97,8 @@ function mainPane(){
 // // [[[[--------------------------------Html-Grab-----------------------------------------------]]]]
 
 	charName = fixName(document.getElementById('char').value);
-	realm = toTitleCase(document.getElementById('realm').value).trim();
 	locale = document.getElementById('locale').value;
+	realm = toTitleCase(document.getElementById(locale).value).trim();
 	let img = document.createElement("img");
 	let url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
 
