@@ -1,52 +1,59 @@
-// to do
+// ------------- to do
+// get rid of globals
 // dont send the character achievement request data billion times for every single boss lookup!
-// drop down realm list for eu/us
 // implement kr
-// nicer submission format on jotform side
 // async.await ??
 // fix all the patchwerk/bandaid solutions
-// 
 // issues
 // guild migrate causes multiple bugs
 // character data is mostly non existant prior to july 2012 //ragnaros deathwing wont work most of the time
 
+// ------------- First kill rankings algorithm
+// Check if the player killed the given world of warcraft boss by blizz achievement api
+// If no return else get killtimestamp
+// search playerGuilds array and find which guild the player was in when he acquired the kill achievement (compare GuildJoin/Leave with killstamp)
+// if the player was in a guild on when he acquired the achievement request that guild's achievement list and get boss kill timestamp
+// compare player killstamp with guild's to see if player actually got the achievement within that guild (150k flex approx to 5 mins due to minimal delays on  possible playerstamps)
+// get the guilds ranking from the relevant boss.txt
+// 10.14.2017 usin async data load then loop through loaded data from now on to do less requests overall
 
 // [[[[--------------------------------Constants--------------------------------------------------------]]]]
 const battleNetApiKey = "b7pycu6727tfgrnzawp6sn5bxeerh92z"; // Battle Net Api Key
 const warcraftLogsApiKey = "bff965ef8c377f175a671dacdbdbc822"; // Warcraftlogs Api Key
 const proxy = "https://cors-anywhere.herokuapp.com/"; // proxy alternates ??
 
-
 // [[[[--------------------------------Initialize-------------------------------------------------------]]]]
-let divClone;
-let tooltipClone;
-let clicked;
-let firstClick = true;
+let divClone; //html reset resetter
+let tooltipClone; //wowhead tooltips block resetter
+let clicked; // Switch button to see if widget currently is ready to submit data to Jotform
+let firstClick = true; // ??
 
 //global loads
 let charName;
 let realm;
 let locale;
-let sizeObject = {
+
+let sizeObject = { //Jotform structure to request frame size
 	height : 0
 }
 
-let playerGuilds = []; //whole list
-let guildRequestList = [];  //guilds to be requested
-let altsArray = [] //alt toons	
-let fresh = []; //unique requests only which will hold up the data
+let playerGuilds = []; //whole list including every single guild player was in with join and leave timestamps
+let guildRequestList = []; //playerguilds branched depending if given boss's stamp fall between that guild's leave and join
+let altsArray = [] //alt toons
+let fresh = []; //unique guild request data to avoid requesting same calls over and over
 
 let submitHtml = document.createElement('div')
-let callbackCount = 0
-let callCount = 0;
-let uniqueItems; 
-let uniqueRequest; 
+let callbackCount = 0 //total call back count needed
+let callCount = 0 //current call back count
+let uniqueRequest; //filters playerGuilds on it's way to array 'fresh'
 
-let stamps;
-let lost = false;
-let process = false;
+let stamps; //array including player kill stamps for every boss -1 if havent killed that boss
+let lost = false // player has a disbanded guild 
+let process = false; // currently fetching data
 
 $(document).ready(function(){
+
+	//Pick the realm list depending on Locale choice
 	$('#locale').bind('change', function () {
         var value = $(this).val();
          $('.realm-js').not('#' + value).hide();
@@ -54,7 +61,7 @@ $(document).ready(function(){
 
     }).trigger('change'); // Setup the initial states
 
-	JFCustomWidget.subscribe("ready", function(){ 
+	JFCustomWidget.subscribe("ready", function(){
 		// implement jotform options
 		// fontSize = parseInt(JFCustomWidget.getWidgetSetting('fontSize'));
 		// fontFamily = JFCustomWidget.getWidgetSetting('fontFamily');
@@ -66,24 +73,21 @@ $(document).ready(function(){
 
 $(window).on("load", function(){
 	divClone = $(".wrapper-js").html();
+	//Clone to reset page later on
 });
 
 function mainPane(){
-
 	if (process){
 		alert('no spamerino plx');
 		return;
 	}
 
-	process = true;
 // [[[[--------------------------------Reset--Variables------------------------------------------]]]]
-	
-
+	process = true; 
 	fresh = []
 	playerGuilds = [];
 	altsArray = [];
 	guildRequestList = [];
-	uniqueItems = [];
 	uniqueRequest = [];
 	stamps = [];
 	callCount = 0;
@@ -95,16 +99,24 @@ function mainPane(){
 
 
 // // [[[[--------------------------------Html-Grab-----------------------------------------------]]]]
-
+	// let load = document.createElement("img");
+	// load.setAttribute("id", "loading");
+	// load.src = 'https://raw.githubusercontent.com/Saccarab/WoW-Resume-Old/master/images/ROLL.gif'
+	// load.alt = 'Loading'
+	// let kills = document.getElementById('kills').appendChild(load)
 	charName = fixName(document.getElementById('char').value);
 	locale = document.getElementById('locale').value;
 	realm = toTitleCase(document.getElementById(locale).value).trim();
 	let img = document.createElement("img");
 	let url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
 
-	if (!firstClick){
-		$("#tooltip_block").html(tooltipClone); 
-		$(".wrapper-js").html(divClone); 
+	// ?? unsure why implemented this probably due to late rendering on wowhead tooltips
+	//    or main div disappearin
+	if (!firstClick){ 
+		//wowhead tooltips are built into html by default because they just dont make calls after initial render for some reason
+		//so just keep them in a hidden block within index.html and clone for later use
+		$("#tooltip_block").html(tooltipClone);
+		$(".wrapper-js").html(divClone);
 	}
 
 	if (firstClick)
@@ -130,7 +142,7 @@ function mainPane(){
 		
 		for (i = 0; i < lineLength; i++){
 			if (lines[i].indexOf("<a href=\"/characters") != -1 ) { // ALTS
-				merge ++; 
+				merge ++;
 				let grab = lines[i].split("/");
 
 				ilvl=lines[i+1].substring(lines[i+1].lastIndexOf("<td>") + 4,lines[i+1].lastIndexOf("</td>"));
@@ -142,14 +154,14 @@ function mainPane(){
 					if (j == 2) //Grab Locale
 				 		loc = grab[j];
 
-				 	else if (j == 3) //Grab Realm
+				 	else if (j == 3)//Grab Realm
 
 				 		grabRealm = grab[j].replace(/%20/g, "-");
 
 				 	else if (j == 4){ // Grab Class & Char Name
 
 				 		//-----------------NAME----------------
-				 		temp = grab[4];	
+				 		temp = grab[4];
 				 		temp = temp.split("\"");
 				 		name = temp[3].replace(/['" ]+/g, '');
 				 		name = name.replace("<", "");
@@ -160,13 +172,13 @@ function mainPane(){
 				 		wClass = wClass.replace("-"," ");
 				 		getItemLevel(locale, grabRealm, name, addAltx);
 
-				 		altObj = { 
+				 		altObj = {
 							name: name,
 							locale: locale,
 							realm: grabRealm
 						}
 						altsArray.push(altObj);
-				 	} 	
+				 	}
 				}
 			}
 			else if (lines[i].indexOf("guilds") != -1 ){ //guilds
@@ -204,7 +216,7 @@ function mainPane(){
 				}
 
 				if (k != 1) //missread on first catch
-					playerGuilds.push(guild); 
+					playerGuilds.push(guild);
 			}
 			else{}//cnd
 		}
@@ -213,7 +225,9 @@ function mainPane(){
 		if (altLength === 0)
 			rankings()
 		else{
-			altsArray.forEach(function(alt){
+			// scrap every single alt and their guilds aswell
+			// run rankings() when all alt guilds are loaded & grabbed into the playerguilds array
+			altsArray.forEach(function(alt){ 
 				let url = proxy + buildTrackUrl(alt.locale, alt.realm, alt.name);
 				readToon(url, function(){
 					callCount ++;
@@ -232,9 +246,6 @@ function mainPane(){
 	  	$("#wrapper-js").html(divClone); 
 	  	process = false;
 	  	alert("Invalid Character");// if (fail == 0){
-	  	// 	proxy = 'https://crossorigin.me/'
-	  	// 	fail = fail + 1;
-	  	// 	mainPane();
 	  }
 	});
 	// [[[[--------------------------------ARTIFACT PANE-----------------------------------------------]]]]
@@ -261,17 +272,19 @@ function mainPane(){
 	// [[[[--------------------------------Hyperlinks-----------------------------------------------]]]]
 
 	let wlogsBody = "https://www.warcraftlogs.com/character/" + locale + "/" + realm.replace(/\s+/g, '-') + "/" + charName 
-	document.getElementById("wlogs").href = wlogsBody;
-
 	let wowProgressText = "https://www.wowprogress.com/character/" + locale + "/" + realm.replace(/\s+/g, '-') + "/" + charName;
+	let armoryText = buildArmoryLink(locale, realm, charName);
 
-	let armoryText = buildArmoryLink(locale, realm, charName); 
-	
+	document.getElementById("wlogs").href = wlogsBody;
 	document.getElementById("blizz").href = armoryText;
 	document.getElementById("progress").href = wowProgressText;
+
 	let blizzString = document.getElementById("blizz").children[0].text;
+
+	//jotform submit event
 	JFCustomWidget.subscribe("submit", function(){
 	
+		//grab current outerhtml
 		let blizzString = document.getElementById("blizz").outerHTML;		
 		let progressString = document.getElementById("progress").outerHTML;
 		let wlogsString = document.getElementById("wlogs").outerHTML;
@@ -288,7 +301,7 @@ function mainPane(){
 	});
 }
 
-function temp(){
+function temp(){ //manual add alt helper
 	let altDiv = document.getElementById("alts");
 	let altName = document.getElementById('altName').value;
 	altName = upperCaseFirstL(altName);
@@ -297,7 +310,8 @@ function temp(){
 	getItemLevel( locale, altRealm, altName, addAltx); //(altDiv)
 }
 
-function getItemLevel(locale, realm, name , func){ // getItemLevel(locale, grabRealm, name, addAltx) is sent from the mainPane
+function getItemLevel(locale, realm, name ,func){ // getItemLevel(locale, grabRealm, name, addAltx) is sent from the mainPane
+	// grab ilvl&class then pass onto addaltx
 	let request;
 
 	if (locale == "EU")
@@ -322,7 +336,7 @@ function getItemLevel(locale, realm, name , func){ // getItemLevel(locale, grabR
 }
 
 function addAltx(locale, realm, name, obj){ //, divid
-	sizeObject.height = sizeObject.height + 18.5;
+	sizeObject.height = sizeObject.height + 18.5; //request extra jotform frame size for each alt
 	JFCustomWidget.requestFrameResize(sizeObject);
 	name = upperCaseFirstL(name);
 	realm = toTitleCase(realm.toString());
@@ -341,7 +355,7 @@ function addAltx(locale, realm, name, obj){ //, divid
 
 	button.addEventListener("click", function(e){
 		removeDiv(this);
-	});	
+	});
 
 	text.innerHTML = " " + obj.characterilvl + " item level                               	"; //ilvl api
 
@@ -352,33 +366,34 @@ function addAltx(locale, realm, name, obj){ //, divid
 	div.appendChild(link);
 	div.appendChild(text);
 	altsHtml = altsHtml + div.outerHTML + "\n";
-	div.appendChild(button);  //button on submission 
-	alts.appendChild(div);	
+	div.appendChild(button);  //no button on submission object
+	alts.appendChild(div);
 }
 
 function readToon(url, callback){
+	//scrap character
 	$.ajax({
 	  url: url,
 	  async: true,
 	  success: function(data){
-	  		let grab;
-	  		let k = 0;
-			let lines = data.split("\n");
+	  		let grab
+	  		let k = 0
+			let lines = data.split("\n")
 			let lineLength = lines.length;
 			for (i = 0; i < lineLength; i++){
 				if (lines[i].indexOf("guilds") != -1 ){ //guilds
 					k++;
-					let d = new Date();
-					let n = d.getTime();
+					let d = new Date()
+					let n = d.getTime()
 					let guildGrab = lines[i].substring(lines[i].lastIndexOf("guilds")+7, lines[i].lastIndexOf('" '));
-					guildGrab = guildGrab.split("/");
+					guildGrab = guildGrab.split("/")
 					let dateLeave = formatDate(lines[i+3]); //convert to stamp
 					if (isNaN(dateLeave)){
 						dateLeave = n
 					}
 					
 					let tempGrab = guildGrab[2].split("%20");
-					let tempSize = tempGrab.length;
+					let tempSize = tempGrab.length
 					let gName = ""
 
 					if (tempSize > 1){
@@ -401,16 +416,17 @@ function readToon(url, callback){
 					}
 
 					if (k != 1) //missread on first catch
-						playerGuilds.push(guild); 						
+						playerGuilds.push(guild);
 				}
 				else if (lines[i].indexOf("Merged Characters") != -1 ){
+					//involve merged characters aw
 					let merge = lines[i+1].split('/')
 					let mergeGrab = merge[4].split(" ")
 					let mergeName = mergeGrab[0].slice(0, -1)
 					let mergeRealm = merge[3]
-					let mergeLocale = merge[2];
+					let mergeLocale = merge[2]
 					if (!(mergeName === charName && mergeLocale === locale && mergeRealm === realm))
-						getItemLevel(mergeLocale, mergeRealm, mergeName, addAltx);
+						getItemLevel(mergeLocale, mergeRealm, mergeName, addAltx)
 				}
 			}
 			//callback()
@@ -420,49 +436,12 @@ function readToon(url, callback){
 	  error: function(){
 	  	console.log("error while reading toon");
 	  	callback();
-	  }			  
+	  }
 	});
 }
 
-function guildRank(fdata, boss, personalAchiev){
-	let index = fdata.achievements.achievementsCompleted.indexOf(personalAchiev);
-	if (index != -1){   // make this a function to avoid bracket hell or use if == -1 return else do ur stuff (which could look way more elegant)
-		let stamp = fdata.achievements.achievementsCompletedTimestamp[index]; //hoist the colors
-		playerGuilds.forEach(function (guildIter, i){
-			if (stamp < guildIter.dateLeave && stamp > guildIter.dateJoin){
-				guildIter.boss = getBossOrder(boss);
-				guildRequestList.push(JSON.parse(JSON.stringify(guildIter)))
-				let temp = guildIter.dateJoin
-				let temp2 = guildIter.dateLeave
-				delete guildIter.dateJoin //patchwerk
-				delete guildIter.dateLeave
-				delete guildIter.boss
-				uniqueRequest.push(JSON.parse(JSON.stringify(guildIter)))
-				guildIter.dateJoin = temp
-				guildIter.dateLeave = temp2
-			}
-		});
-
-		fresh = uniqueRequest.map(function(e, index){
-			let count = -1;
-			uniqueRequest.forEach(function(ele, idx){
-				if (JSON.stringify(ele) === JSON.stringify(e))
-					count ++	
-			});
-			if (count == 0)
-				return e;
-			else
-				uniqueRequest[index] = undefined		
-		});
-
-		fresh = fresh.filter(function( element ) { //shrink
-		   return element !== undefined;
-		});
-
-	}
-}
-
 function rankings(){
+	//call everysingle boss with playestamps
 	if (locale == "EU")
 		request = "https://eu.api.battle.net/wow/character/" + realm + "/" + charName + "?fields=achievements&locale=en_GB&apikey=" + battleNetApiKey;
 	else if (locale == "US")
@@ -474,7 +453,7 @@ function rankings(){
 		async: true,
 		type: 'GET',
 		url: request,
-		success: function(data) { //dont send the data 6 times !! fix me
+		success: function(data) { //dont send the data 13 times !! fix me
 
 			let obj = {
 				completedArray : data.achievements.achievementsCompleted,
@@ -497,13 +476,58 @@ function rankings(){
 			guildRank(data, "blackhand", blackhandPersonal)
 			guildRank(data, "imperator", imperatorPersonal)
 
-			guildRequestList.sort(function(a, b){
+			guildRequestList.sort(function(a, b){ //sort guildRequestList by boss no
 				return b.boss - a.boss 
 			});
 
 			fill();
+		},
+		error: function(){
+			clicked = false;	  		
+		  	process = false;
 		}
 	});
+}
+
+function guildRank(fdata, boss, personalAchiev){
+	//builds guildRequestList using playerGuilds and join&leave stamps within those guilds
+	//compare stamps with player kill stamp push to playerGuilds with bossCode if is in range
+	let index = fdata.achievements.achievementsCompleted.indexOf(personalAchiev);
+	if (index != -1){  // make this a function to avoid bracket hell or use if == -1 return else do ur stuff (which could look way more elegant)
+		let stamp = fdata.achievements.achievementsCompletedTimestamp[index]; //hoist the colors
+		playerGuilds.forEach(function (guildIter, i){
+			if (stamp < guildIter.dateLeave && stamp > guildIter.dateJoin){
+				guildIter.boss = getBossOrder(boss);
+				guildRequestList.push(JSON.parse(JSON.stringify(guildIter)))
+				let temp = guildIter.dateJoin
+				let temp2 = guildIter.dateLeave
+				delete guildIter.dateJoin //patchwerk
+				delete guildIter.dateLeave
+				delete guildIter.boss
+				uniqueRequest.push(JSON.parse(JSON.stringify(guildIter)))
+				guildIter.dateJoin = temp
+				guildIter.dateLeave = temp2
+			}
+		});
+		// filter uniqueRequest to a new array called fresh
+		// only request the unique guilds inside the array fresh later on
+		fresh = uniqueRequest.map(function(e, index){
+			let count = -1;
+			uniqueRequest.forEach(function(ele, idx){
+				if (JSON.stringify(ele) === JSON.stringify(e))
+					count ++
+			});
+
+			if (count == 0)
+				return e;
+			else
+				uniqueRequest[index] = undefined
+		});
+
+		fresh = fresh.filter(function( element ) { //shrink
+		   return element !== undefined;
+		});
+	}
 }
 
 function playerStamps(obj){
@@ -525,6 +549,11 @@ function playerStamps(obj){
 }
 
 function asyncGet(guildElement, index, callback){
+	//loops through the array fresh 
+	//requests the relevant data
+	//and pushes requested stamp arrays to every single guild object one by one
+	//callback increments callback count 
+	//=> can move onto guildrequestlist iteration when callbackCount == callback
 	let request;
 
 	if (fresh[index].guildLocale === "eu") //func
@@ -536,7 +565,7 @@ function asyncGet(guildElement, index, callback){
 		async: true,
 		type: 'GET',
 		url: request,
-		success: function(aData) {	
+		success: function(aData) {
 
 			let obj = {
 				completedArray : aData.achievements.achievementsCompleted,
@@ -555,6 +584,8 @@ function asyncGet(guildElement, index, callback){
 	});
 }
 
+// Run loopThrough when all request data is loaded into the unique array "fresh" 
+
 function fill(){
 	let size = fresh.length;
 	fresh.forEach(function(ele, i){
@@ -568,18 +599,13 @@ function fill(){
 		
 	});
 }
-
-	// Check if the player killed the given world of warcraft boss by blizz achievement api
-	// If no return else get killtimestamp
-	// search playerGuilds array and find which guild the player was in when he acquired the kill achievement (compare GuildJoin/Leave with killstamp)
-	// if the player was in a guild on when he acquired the achievement request that guild's achievement list and get boss kill timestamp
-	// compare player killstamp with guild's to see if player actually got the achievement within that guild (150k flex approx to 5 mins due to minimal delays on  possible playerstamps)
-	// get the guilds ranking from the relevant boss.txt
-					
-	// 10.14.2017 usin async data load then loop from now on to do less requests overall
+				
+//Loops over the guildrequestList 
 
 function loopThrough(){
-	tooltipClone = $("#tooltip_block").html();
+
+	let first = true
+	tooltipClone = $("#tooltip_block").html(); //wowhead tooltips clone
 	guildMigrate();
 	let list = [1,2,3,4,5,6,7,8,9,10,11,12,13]; //prevent overlapping on the same boss
 	// remove recurring boss requests when it is found
@@ -603,16 +629,20 @@ function loopThrough(){
 								guild : guild,
 								url: "rankings/" + boss + ".txt",
 								success: function(sData){
+									if (first){
+										first = false
+										// document.getElementById("loading").parentNode.removeChild("loading");
+									}
 									let div = document.getElementById(boss);
 									let bufferDiv = document.createElement("div")
 									let rankings = document.getElementById(boss);
-									let img = document.createElement("img");	
+									let img = document.createElement("img");
 									let lines = sData.split("\n");
 									lineCount = lines.length;
 									let rank;
-									let guildMigrateBlocker = guild.guildRealm; 
+									let guildMigrateBlocker = guild.guildRealm;
 									//rankings list has issues on matching guildname/realm if we lose the migrated guild value
-
+									//keep the oldrealm as an attribute so if merging is done between migrated guilds we keep track of the actual guild that kills is taken
 									if (guild.oldRealm !== undefined)
 										guildMigrateBlocker = guild.oldRealm;
 
@@ -620,8 +650,14 @@ function loopThrough(){
 										//rank check for migrated guild names as well. 
 										//can put this out in a cleaner way sometime
 										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName){ //temp fix??
-											sizeObject.height = sizeObject.height + 44.1
+											// -------------------- TO DO ----------------
+											// if even though all conditions met but it wont manage to execute this if
+											// either wprogress rankings are missing this guild 
+											// or guild has the wrong realmName in rankings.txt due to migrate 
+											// ask user to report this guild so rankings.txt can be modified appropriately
+											sizeObject.height = sizeObject.height + 44.1 //JF frame size request for a wowhead tooltip
 											JFCustomWidget.requestFrameResize(sizeObject);
+											//build images for submission but use tooltips on actual page
 											img.src = "https://raw.githubusercontent.com/Saccarab/WoW-Resume/master/images/" + boss + ".jpg";
 											img.alt = boss
 											bufferDiv.appendChild(img)
@@ -629,25 +665,25 @@ function loopThrough(){
 											let tooltip = eval('tooltip_' + boss)
 											div.appendChild(tooltip)
 											tooltip.removeAttribute('hidden')
+
 											let txt = " " + upperCaseFirstL(boss) + getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
 											let txt2 = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
-
 											let text =  document.createTextNode(txt)
 											let text2 = document.createTextNode(txt2)
 
 											bufferDiv.appendChild(text)
-											submitHtml.appendChild(bufferDiv)
-											div.appendChild(text2)								
+											submitHtml.appendChild(bufferDiv) //div that is gonna be submitted (that has no zamimg wowhead tooltips!)
+											div.appendChild(text2) //actual page with zamimg tooltips
 										}
 									}
 								},
 								error: function(){ 
 									console.log("Guild Request fail for " + guild.guildName + " " + guild.guildRealm);
-								} 
-							});	
+								}
+							})
 						}	
-						else return;				
-					} // Hellfire		
+						else return;
+					} // Hellfire
 				}
 			});
 		}
@@ -658,9 +694,13 @@ function loopThrough(){
 		lost = false;
 	}
 
-	process = false;
+	process = false; //end process
 }
 
+//blizz achievements arent kept on previous realm when a guild migrates to a new realm
+//if there are identical local&name guilds within the array fresh
+//merge them and add a new property named oldRealm to the new array
+//fixed triple merge aswell for guilds that migrated more than once e.g.(method-xavius,twnether,tarrenmill)
 function guildMigrate(){
 	fresh.forEach(function(guild, idx){ //iterate self
 		for (let i = 0; i < fresh.length; i++){
@@ -670,7 +710,7 @@ function guildMigrate(){
 						guildRequestList.forEach(function(replace){
 							if (replace.guildName === fresh[i].guildName && replace.guildRealm === guild.guildRealm){
 								replace.oldRealm = replace.guildRealm;
-								replace.guildName = fresh[i].guildName;
+								replace.guildName = fresh[i].guildName; //useless?
 								replace.guildRealm = fresh[i].guildRealm;
 							}			
 						});
@@ -679,7 +719,7 @@ function guildMigrate(){
 						guildRequestList.forEach(function(replace){
 							if (replace.guildName === guild.guildName && replace.guildRealm === fresh[i].guildRealm){
 								replace.oldRealm = replace.guildRealm;
-								replace.guildName = guild.guildName;
+								replace.guildName = guild.guildName; //useless?
 								replace.guildRealm = guild.guildRealm;
 							}
 						});
