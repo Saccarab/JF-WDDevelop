@@ -1,4 +1,4 @@
-# WoW Resume
+#  [WoW Resume](https://saccarab.github.io/WoW-Resume/)
 
 World of Warcraft account resume generator. Also available at **WYSIWYG** form builder website https://widgets.jotform.com/widget/wow_resume to use as a guild application form building tool.
 
