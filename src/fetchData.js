@@ -5,6 +5,7 @@
 // async.await ??
 // fix all the patchwerk/bandaid solutions
 // issues
+// servers including a single quote are ripped :S
 // guild migrate causes multiple bugs
 // character data is mostly non existant prior to july 2012 //ragnaros deathwing wont work most of the time
 
@@ -106,9 +107,9 @@ function mainPane(){
 	// let kills = document.getElementById('kills').appendChild(load)
 	charName = fixName(document.getElementById('char').value);
 	locale = document.getElementById('locale').value;
-	realm = toTitleCase(document.getElementById(locale).value).trim();
+	realm = document.getElementById(locale).value.trim();
 	let img = document.createElement("img");
-	let url = proxy + buildTrackUrl(locale, toTitleCase(realm.replace("-", "%20")), charName);
+	let url = proxy + buildTrackUrl(locale, realm.replace("-", "%20"), charName);
 
 	// ?? unsure why implemented this probably due to late rendering on wowhead tooltips
 	//    or main div disappearin
@@ -649,6 +650,7 @@ function loopThrough(){
 									for (i=0 ; i < lineCount ; i++){
 										//rank check for migrated guild names as well. 
 										//can put this out in a cleaner way sometime
+										//Fix text so no need to trim
 										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName){ //temp fix??
 											// -------------------- TO DO ----------------
 											// if even though all conditions met but it wont manage to execute this if
@@ -674,8 +676,11 @@ function loopThrough(){
 											bufferDiv.appendChild(text)
 											submitHtml.appendChild(bufferDiv) //div that is gonna be submitted (that has no zamimg wowhead tooltips!)
 											div.appendChild(text2) //actual page with zamimg tooltips
+											break;
 										}
 									}
+									if (i == lineCount)
+										console.log(boss + " kill exists within guild " + guild.guildName + " - " + guildMigrateBlocker + " but wasnt listed in the rankings.txt" )
 								},
 								error: function(){ 
 									console.log("Guild Request fail for " + guild.guildName + " " + guild.guildRealm);
