@@ -5,10 +5,8 @@
 // async.await ??
 // fix all the patchwerk/bandaid solutions
 // issues
-// servers including a single quote are ripped :S
 // guild migrate causes multiple bugs
 // character data is mostly non existant prior to july 2012 //ragnaros deathwing wont work most of the time
-
 // ------------- First kill rankings algorithm
 // Check if the player killed the given world of warcraft boss by blizz achievement api
 // If no return else get killtimestamp
@@ -646,12 +644,17 @@ function loopThrough(){
 									//keep the oldrealm as an attribute so if merging is done between migrated guilds we keep track of the actual guild that kills is taken
 									if (guild.oldRealm !== undefined)
 										guildMigrateBlocker = guild.oldRealm;
+									//%27 quote %20 space
+									// lightning-s-blade(lightning%20s%20blade) wprogress realm format 
+									// bnet lightning's blade (lightning%20s%27blade) wont match the above one
+									// so cover up for that one
+									let noQuotes = guildMigrateBlocker.replace('%27','%20') 
 
 									for (i=0 ; i < lineCount ; i++){
 										//rank check for migrated guild names as well. 
 										//can put this out in a cleaner way sometime
 										//Fix text so no need to trim
-										if (lines[i].trim() === guild.guildLocale + guildMigrateBlocker + guild.guildName){ //temp fix??
+										if (lines[i].trim() === guild.guildLocale + noQuotes + guild.guildName){ //temp fix??
 											// -------------------- TO DO ----------------
 											// if even though all conditions met but it wont manage to execute this if
 											// either wprogress rankings are missing this guild 
@@ -668,8 +671,8 @@ function loopThrough(){
 											div.appendChild(tooltip)
 											tooltip.removeAttribute('hidden')
 
-											let txt = " " + upperCaseFirstL(boss) + getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
-											let txt2 = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
+											let txt = " " + upperCaseFirstL(boss) + getBossText(boss) + rank + " in " + conv(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
+											let txt2 = getBossText(boss) + rank + " in " + conv(guild.guildName) + "-" + blizzspaceToSpace(guildMigrateBlocker);
 											let text =  document.createTextNode(txt)
 											let text2 = document.createTextNode(txt2)
 
