@@ -5,6 +5,7 @@
 // async.await ??
 // fix all the patchwerk/bandaid solutions
 // issues
+// cnazjolnerubKismet cn hyphen realm format? manualed to cnazjol-nerubKismet
 // guild migrate causes multiple bugs
 // character data is mostly non existant prior to july 2012 //ragnaros deathwing wont work most of the time
 // ------------- First kill rankings algorithm
@@ -475,8 +476,8 @@ function rankings(){
 			guildRank(data, "blackhand", blackhandPersonal)
 			guildRank(data, "imperator", imperatorPersonal)
 
-			guildRequestList.sort(function(a, b){ //sort guildRequestList by boss no
-				return b.boss - a.boss 
+			guildRequestList.sort(function(a, b){ //sort guildRequestList date join to prevent old guild collision
+				return b.dateJoin - a.dateJoin
 			});
 
 			fill();
@@ -617,7 +618,6 @@ function loopThrough(){
 						let boss = getBossName(guild.boss)
 						let guildAch = eval(boss+'Guild'); //patchwerk
 						let guildStamp = getStamp(guildAch, grab.guildData) // if -1
-
 						let stamp = eval('stamps.'+boss+'Stamp')
 						if (Math.abs(stamp - guildStamp) <= 150000){ // my first Kill is within 5 minutes of guilds kill 
 							let deleteItem = list.indexOf(guild.boss) //patchwerk
@@ -649,7 +649,6 @@ function loopThrough(){
 									// bnet lightning's blade (lightning%20s%27blade) wont match the above one
 									// so cover up for that one
 									let noQuotes = guildMigrateBlocker.replace('%27','%20') 
-
 									for (i=0 ; i < lineCount ; i++){
 										//rank check for migrated guild names as well. 
 										//can put this out in a cleaner way sometime
@@ -679,11 +678,12 @@ function loopThrough(){
 											bufferDiv.appendChild(text)
 											submitHtml.appendChild(bufferDiv) //div that is gonna be submitted (that has no zamimg wowhead tooltips!)
 											div.appendChild(text2) //actual page with zamimg tooltips
+											
 											break;
 										}
 									}
 									if (i == lineCount)
-										console.log(boss + " kill exists within guild " + guild.guildName + " - " + guildMigrateBlocker + " but wasnt listed in the rankings.txt" )
+										console.log(boss + " kill exists within guild " + guild.guildName + " - " + guildMigrateBlocker + " so most likely this first kill wasnt listed in the rankings.txt, you can report it to be added" )
 								},
 								error: function(){ 
 									console.log("Guild Request fail for " + guild.guildName + " " + guild.guildRealm);
