@@ -109,6 +109,7 @@ function mainPane(){
 	realm = document.getElementById(locale).value.trim();
 	let img = document.createElement("img");
 	let url = proxy + buildTrackUrl(locale, realm.replace("-", "%20"), charName);
+	realm = removeParanthesis(realm) //thank aggra (portuguese)  =)
 
 	// ?? unsure why implemented this probably due to late rendering on wowhead tooltips
 	//    or main div disappearin
