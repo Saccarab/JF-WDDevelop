@@ -1,13 +1,16 @@
 // ------------- to do
 // get rid of globals
 // dont send the character achievement request data billion times for every single boss lookup!
-// implement kr
+// implement kr cn ru ?
 // async.await ??
+// break into smaller modules
 // fix all the patchwerk/bandaid solutions
-// issues
+// --------------issues
+// Aggra Portuguese needs further url customization for every different API and request
 // cnazjolnerubKismet cn hyphen realm format? manualed to cnazjol-nerubKismet
 // guild migrate causes multiple bugs
 // character data is mostly non existant prior to july 2012 //ragnaros deathwing wont work most of the time
+// 
 // ------------- First kill rankings algorithm
 // Check if the player killed the given world of warcraft boss by blizz achievement api
 // If no return else get killtimestamp
@@ -99,17 +102,12 @@ function mainPane(){
 
 
 // // [[[[--------------------------------Html-Grab-----------------------------------------------]]]]
-	// let load = document.createElement("img");
-	// load.setAttribute("id", "loading");
-	// load.src = 'https://raw.githubusercontent.com/Saccarab/WoW-Resume-Old/master/images/ROLL.gif'
-	// load.alt = 'Loading'
-	// let kills = document.getElementById('kills').appendChild(load)
 	charName = fixName(document.getElementById('char').value);
 	locale = document.getElementById('locale').value;
 	realm = document.getElementById(locale).value.trim();
 	let img = document.createElement("img");
 	let url = proxy + buildTrackUrl(locale, realm.replace("-", "%20"), charName);
-	realm = removeParanthesis(realm) //thank aggra (portuguese)  =)
+	// realm = removeParanthesis(realm) //thank aggra (portuguese)  =)
 
 	// ?? unsure why implemented this probably due to late rendering on wowhead tooltips
 	//    or main div disappearin
@@ -122,6 +120,12 @@ function mainPane(){
 
 	if (firstClick)
 		firstClick = false;
+
+	let load = document.createElement("img");
+	load.setAttribute("id", "loading");
+	load.src = 'https://github.com/Saccarab/WoW-Resume/blob/master/images/Loading.gif?raw=true'
+	load.alt = 'Loading'
+	let kills = document.getElementById('kills').appendChild(load)
 
 // // [[[[--------------------------------Scraping-----------------------------------------------]]]]
 	$.ajax({
@@ -246,6 +250,7 @@ function mainPane(){
 		JFCustomWidget.requestFrameResize(sizeObject);
 	  	$("#wrapper-js").html(divClone); 
 	  	process = false;
+	  	notLoading()
 	  	alert("Invalid Character");// if (fail == 0){
 	  }
 	});
@@ -486,6 +491,7 @@ function rankings(){
 		error: function(){
 			clicked = false;	  		
 		  	process = false;
+		  	notLoading()
 		}
 	});
 }
@@ -623,16 +629,16 @@ function loopThrough(){
 						if (Math.abs(stamp - guildStamp) <= 150000){ // my first Kill is within 5 minutes of guilds kill 
 							let deleteItem = list.indexOf(guild.boss) //patchwerk
 							delete list[deleteItem]
+							if (first){
+								first = false
+								notLoading()
+							}
 							$.ajax({
 								async: true,
 								type: 'GET',
 								guild : guild,
 								url: "rankings/" + boss + ".txt",
 								success: function(sData){
-									if (first){
-										first = false
-										// document.getElementById("loading").parentNode.removeChild("loading");
-									}
 									let div = document.getElementById(boss);
 									let bufferDiv = document.createElement("div")
 									let rankings = document.getElementById(boss);
@@ -691,19 +697,18 @@ function loopThrough(){
 								}
 							})
 						}	
-						else return;
 					} // Hellfire
 				}
 			});
 		}
-		else return;
 	});
 	if (lost){ //unreachable
 		alert('Data might be lost due to disbanded guild.')
 		lost = false;
 	}
-
+	notLoading()
 	process = false; //end process
+
 }
 
 //blizz achievements arent kept on previous realm when a guild migrates to a new realm
