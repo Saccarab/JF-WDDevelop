@@ -595,7 +595,7 @@
 			<div id= "addAlt" class = "center"> Add another alt <br><br>	
 				<input type = "text" name = "altName" id = "altName" placeholder = "Name">
 				<input type = "text" name = "altRealm" id = "altRealm" placeholder = "Realm"><br><br>
-				<button id = "tempid">Add alt</button>
+				<button id = "tempid" onclick ="temp()">Add alt</button>
 			</div>
 		</div>
 		
@@ -603,7 +603,5 @@
 		<script src = "src/getters.js"></script>
 		<script src = "src/helpers.js"></script>
 		<script src = "src/fetchData.js"></script>	
-		<script> document.getElementById("tempid").addEventListener("click",temp);
-		</script>
 	</body>
 </html>
