@@ -10,7 +10,7 @@
 // cnazjolnerubKismet cn hyphen realm format? manualed to cnazjol-nerubKismet
 // guild migrate causes multiple bugs
 // character data is mostly non existant prior to july 2012 //ragnaros deathwing wont work most of the time
-// 
+// request extra frame size on JF when on a mobile device
 // ------------- First kill rankings algorithm
 // Check if the player killed the given world of warcraft boss by blizz achievement api
 // If no return else get killtimestamp
@@ -40,6 +40,7 @@ let sizeObject = { //Jotform structure to request frame size
 	height : 0
 }
 
+let altsHtml;
 let playerGuilds = []; //whole list including every single guild player was in with join and leave timestamps
 let guildRequestList = []; //playerguilds branched depending if given boss's stamp fall between that guild's leave and join
 let altsArray = [] //alt toons
