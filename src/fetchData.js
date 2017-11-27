@@ -7,10 +7,11 @@
 // fix all the patchwerk/bandaid solutions
 // --------------issues
 // Aggra Portuguese needs further url customization for every different API and request
-// cnazjolnerubKismet cn hyphen realm format? manualed to cnazjol-nerubKismet
-// guild migrate causes multiple bugs
+// -cnazjolnerubKismet- cn hyphen realm format? manualed to cnazjol-nerubKismet
+// guild migrate migth cause some bugs
 // character data is mostly non existant prior to july 2012 //ragnaros deathwing wont work most of the time
 // request extra frame size on JF when on a mobile device
+// some of the ios devices wont register onClick or onSubmit events
 // ------------- First kill rankings algorithm
 // Check if the player killed the given world of warcraft boss by blizz achievement api
 // If no return else get killtimestamp
@@ -106,7 +107,6 @@ function mainPane(){
 	charName = fixName(document.getElementById('char').value);
 	locale = document.getElementById('locale').value;
 	realm = document.getElementById(locale).value.trim();
-	let img = document.createElement("img");
 	let url = proxy + buildTrackUrl(locale, realm.replace("-", "%20"), charName);
 	// realm = removeParanthesis(realm) //thank aggra (portuguese)  =)
 
@@ -117,16 +117,11 @@ function mainPane(){
 		//so just keep them in a hidden block within index.html and clone for later use
 		$("#tooltip_block").html(tooltipClone);
 		$(".wrapper-js").html(divClone);
+		loading()
 	}
 
 	if (firstClick)
 		firstClick = false;
-
-	let load = document.createElement("img");
-	load.setAttribute("id", "loading");
-	load.src = 'https://github.com/Saccarab/WoW-Resume/blob/master/images/Loading.gif?raw=true'
-	load.alt = 'Loading'
-	let kills = document.getElementById('kills').appendChild(load)
 
 // // [[[[--------------------------------Scraping-----------------------------------------------]]]]
 	$.ajax({
@@ -432,7 +427,7 @@ function readToon(url, callback){
 					let mergeName = mergeGrab[0].slice(0, -1)
 					let mergeRealm = merge[3]
 					let mergeLocale = merge[2]
-					if (!(mergeName === charName && mergeLocale === locale && mergeRealm === realm))
+					if (!(mergeName === charName && mergeLocale === locale && blizzspaceToSpace(realm)))
 						getItemLevel(mergeLocale, mergeRealm, mergeName, addAltx)
 				}
 			}
@@ -468,7 +463,7 @@ function rankings(){
 			}
 
 			playerStamps(obj)
-
+			//most pointless modularity attempt ever
 			guildRank(data, "ragnaros", ragnarosPersonal)
 			guildRank(data, "deathwing", deathwingPersonal)
 			guildRank(data, "emperor", emperorPersonal)
@@ -486,6 +481,7 @@ function rankings(){
 			guildRequestList.sort(function(a, b){ //sort guildRequestList date join to prevent old guild collision
 				return b.dateJoin - a.dateJoin
 			});
+			confirmMigrate()
 
 			fill();
 		},
@@ -503,18 +499,16 @@ function guildRank(fdata, boss, personalAchiev){
 	let index = fdata.achievements.achievementsCompleted.indexOf(personalAchiev);
 	if (index != -1){  // make this a function to avoid bracket hell or use if == -1 return else do ur stuff (which could look way more elegant)
 		let stamp = fdata.achievements.achievementsCompletedTimestamp[index]; //hoist the colors
+		//order descending by dateJoin		
+		playerGuilds.sort(function(a, b){ //?? migrate helper??		
+			return a.dateJoin - b.dateJoin		
+		});
+
 		playerGuilds.forEach(function (guildIter, i){
 			if (stamp < guildIter.dateLeave && stamp > guildIter.dateJoin){
 				guildIter.boss = getBossOrder(boss);
 				guildRequestList.push(JSON.parse(JSON.stringify(guildIter)))
-				let temp = guildIter.dateJoin
-				let temp2 = guildIter.dateLeave
-				delete guildIter.dateJoin //patchwerk
-				delete guildIter.dateLeave
-				delete guildIter.boss
-				uniqueRequest.push(JSON.parse(JSON.stringify(guildIter)))
-				guildIter.dateJoin = temp
-				guildIter.dateLeave = temp2
+				copyObject(guildIter, uniqueRequest)
 			}
 		});
 		// filter uniqueRequest to a new array called fresh
@@ -656,7 +650,9 @@ function loopThrough(){
 									// lightning-s-blade(lightning%20s%20blade) wprogress realm format 
 									// bnet lightning's blade (lightning%20s%27blade) wont match the above one
 									// so cover up for that one
-									let noQuotes = guildMigrateBlocker.replace('%27','%20') 
+									let noQuotes = guildMigrateBlocker.replace('%27','%20')
+									let remQuotes = guild.guildRealm.replace('%27','%20') 
+
 									for (i=0 ; i < lineCount ; i++){
 										//rank check for migrated guild names as well. 
 										//can put this out in a cleaner way sometime
@@ -685,10 +681,32 @@ function loopThrough(){
 
 											bufferDiv.appendChild(text)
 											submitHtml.appendChild(bufferDiv) //div that is gonna be submitted (that has no zamimg wowhead tooltips!)
-											div.appendChild(text2) //actual page with zamimg tooltips
-											
+											div.appendChild(text2) //actual page with zamimg tooltips				
 											break;
 										}
+
+										if (lines[i].trim() === guild.guildLocale + remQuotes + guild.guildName){ 
+										//temp fix?? doublecheck with both gnames wof owprogress realms change for no reason
+										//sloppy but w/e
+											img.src = "https://raw.githubusercontent.com/Saccarab/WoW-Resume/master/images/" + boss + ".jpg";
+											img.alt = boss
+											bufferDiv.appendChild(img)
+											rank = i + 1
+											let tooltip = eval('tooltip_' + boss)
+											div.appendChild(tooltip)
+											tooltip.removeAttribute('hidden')
+
+											let txt = " " + upperCaseFirstL(boss) + getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + " - " + conv(guild.guildRealm);
+											let txt2 = getBossText(boss) + rank + " in " + blizzspaceToSpace(guild.guildName) + " - " + conv(guild.guildRealm);
+											let text =  document.createTextNode(txt)
+											let text2 = document.createTextNode(txt2)
+
+											bufferDiv.appendChild(text)
+											submitHtml.appendChild(bufferDiv) //div that is gonna be submitted (that has no zamimg wowhead tooltips!)
+											div.appendChild(text2) //actual page with zamimg tooltips		
+											break;
+										}	
+
 									}
 									if (i == lineCount)
 										console.log(boss + " kill exists within guild " + guild.guildName + " - " + guildMigrateBlocker + " so most likely this first kill wasnt listed in the rankings.txt, you can report it to be added" )
@@ -712,6 +730,19 @@ function loopThrough(){
 
 }
 
+function confirmMigrate(){
+	playerGuilds.forEach(function(guild, idx){ //iterate all guilds seek for a guild migrate
+		for (let i = 0; i < fresh.length; i++){
+			let found = fresh.some(function(elem){
+				return elem.guildName === guild.guildName && elem.guildRealm === guild.guildRealm
+			});
+			if (!found && guild.guildName === fresh[i].guildName && guild.guildRealm !== fresh[i].guildRealm){
+				copyObject(guild, fresh)
+			}
+		}
+	});
+}
+
 //blizz achievements arent kept on previous realm when a guild migrates to a new realm
 //if there are identical local&name guilds within the array fresh
 //merge them and add a new property named oldRealm to the new array
@@ -730,15 +761,6 @@ function guildMigrate(){
 							}			
 						});
 					}
-					else{
-						guildRequestList.forEach(function(replace){
-							if (replace.guildName === guild.guildName && replace.guildRealm === fresh[i].guildRealm){
-								replace.oldRealm = replace.guildRealm;
-								replace.guildName = guild.guildName; //useless?
-								replace.guildRealm = guild.guildRealm;
-							}
-						});
-					}	
 				}
 			}
 		}
