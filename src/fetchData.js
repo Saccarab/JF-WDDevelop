@@ -483,7 +483,12 @@ function rankings(){
 			});
 			confirmMigrate()
 
-			fill();
+			if (guildRequestList.length !== 0)
+				fill();
+			else{
+				notLoading()
+				process = false; //end process
+			}
 		},
 		error: function(){
 			clicked = false;	  		
